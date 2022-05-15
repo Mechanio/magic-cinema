@@ -29,10 +29,16 @@ def create_app():
     # app.config.from_object(Config)
     # setup_jwt(app)
 
-    from .views import directors_bp, genres_bp, actors_bp, movies_bp
+    from .views import directors_bp, genres_bp, actors_bp, movies_bp, \
+        auditoriums_bp, movie_sessions_bp, users_bp, tickets_bp
     app.register_blueprint(directors_bp)
     app.register_blueprint(genres_bp)
     app.register_blueprint(actors_bp)
     app.register_blueprint(movies_bp)
+    app.register_blueprint(auditoriums_bp)
+    app.register_blueprint(movie_sessions_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(tickets_bp)
+
 
     return app

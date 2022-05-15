@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
+from passlib.hash import pbkdf2_sha256 as sha256
 
 from app.database.database import base, session
 
@@ -16,14 +17,16 @@ class MoviesModel(base):
                           foreign_keys="MovieGenreModel.movie_id")
     actors = relationship("CastModel", lazy='dynamic', cascade="all, delete-orphan",
                           foreign_keys="CastModel.movie_id")
+    sessions = relationship("MovieSessionsModel", lazy='dynamic', cascade="all, delete-orphan",
+                            foreign_keys="MovieSessionsModel.movie_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True):
+    def find_by_id(cls, id, to_dict=True, without_sessions=False):
         movie = session.query(cls).filter_by(id=id).first()
         if not movie:
             return {}
         if to_dict:
-            return cls.to_dict(movie)
+            return cls.to_dict(movie, without_sessions)
         else:
             return movie
 
@@ -65,18 +68,30 @@ class MoviesModel(base):
         session.add(self)
         session.commit()
 
-
+    # TODO sessions
     @staticmethod
-    def to_dict(movie):
-        return {
-           "id": movie.id,
-           "name": movie.name,
-           "description": movie.description,
-           "release_date": movie.release_date,
-           "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
-           "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
-           "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres]
-        }
+    def to_dict(movie, without_sessions=False):
+        if without_sessions:
+            return {
+                "id": movie.id,
+                "name": movie.name,
+                "description": movie.description,
+                "release_date": movie.release_date,
+                "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
+                "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
+                "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres]
+            }
+        else:
+            return {
+               "id": movie.id,
+               "name": movie.name,
+               "description": movie.description,
+               "release_date": movie.release_date,
+               "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
+               "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
+               "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres],
+               "sessions": [MovieSessionsModel.to_dict(movie_session) for movie_session in movie.sessions]
+            }
 
 
 class DirectorsModel(base):
@@ -88,12 +103,12 @@ class DirectorsModel(base):
                           foreign_keys="MoviesModel.director_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False):
+    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
         director = session.query(cls).filter_by(id=id).first()
         if not director:
             return {}
         if to_dict:
-            return cls.to_dict(director, without_movies)
+            return cls.to_dict(director, without_movies, without_sessions)
         else:
             return director
 
@@ -109,9 +124,9 @@ class DirectorsModel(base):
             return director
 
     @classmethod
-    def return_all(cls, offset, limit):
+    def return_all(cls, offset, limit, without_sessions=False):
         directors = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
-        return [cls.to_dict(director) for director in directors]
+        return [cls.to_dict(director, without_sessions=without_sessions) for director in directors]
 
     @classmethod
     def delete_by_id(cls, id):
@@ -128,7 +143,7 @@ class DirectorsModel(base):
         session.commit()
 
     @staticmethod
-    def to_dict(director, without_movies=False):
+    def to_dict(director, without_movies=False, without_sessions=False):
         if without_movies:
             return {
                 "id": director.id,
@@ -140,7 +155,7 @@ class DirectorsModel(base):
                 "id": director.id,
                 "firstname": director.firstname,
                 "lastname": director.lastname,
-                "movies": [MoviesModel.to_dict(movie) for movie in director.movies]
+                "movies": [MoviesModel.to_dict(movie, without_sessions) for movie in director.movies]
             }
 
 
@@ -153,30 +168,30 @@ class ActorsModel(base):
                           foreign_keys="CastModel.actor_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False):
+    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
         actor = session.query(cls).filter_by(id=id).first()
         if not actor:
             return {}
         if to_dict:
-            return cls.to_dict(actor, without_movies)
+            return cls.to_dict(actor, without_movies, without_sessions)
         else:
             return actor
 
     @classmethod
-    def find_by_name(cls, firstname, lastname, to_dict=True):
+    def find_by_name(cls, firstname, lastname, to_dict=True, without_sessions=False):
         actor = session.query(cls).filter_by(firstname=firstname, lastname=lastname) \
             .order_by(cls.id).first()
         if not actor:
             return {}
         if to_dict:
-            return cls.to_dict(actor)
+            return cls.to_dict(actor, without_sessions=without_sessions)
         else:
             return actor
 
     @classmethod
-    def return_all(cls, offset, limit):
+    def return_all(cls, offset, limit, without_sessions=False):
         actors = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
-        return [cls.to_dict(actor) for actor in actors]
+        return [cls.to_dict(actor, without_sessions=without_sessions) for actor in actors]
 
     def save_to_db(self):
         session.add(self)
@@ -193,7 +208,7 @@ class ActorsModel(base):
             return 404
 
     @staticmethod
-    def to_dict(actor, without_movies=False):
+    def to_dict(actor, without_movies=False, without_sessions=False):
         if without_movies:
             return {
                 "id": actor.id,
@@ -205,7 +220,7 @@ class ActorsModel(base):
                 "id": actor.id,
                 "firstname": actor.firstname,
                 "lastname": actor.lastname,
-                "movies": [MoviesModel.find_by_id(movie.movie_id) for movie in actor.movies]
+                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie in actor.movies]
             }
 
 
@@ -238,6 +253,7 @@ class CastModel(base):
         else:
             return 404
 
+
 class GenresModel(base):
     __tablename__ = "genres"
     id = Column(Integer, primary_key=True)
@@ -246,29 +262,29 @@ class GenresModel(base):
                           foreign_keys="MovieGenreModel.genre_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False):
+    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
         genre = session.query(cls).filter_by(id=id).first()
         if not genre:
             return {}
         if to_dict:
-            return cls.to_dict(genre, without_movies)
+            return cls.to_dict(genre, without_movies, without_sessions)
         else:
             return genre
 
     @classmethod
-    def find_by_genre(cls, genre, to_dict=True):
+    def find_by_genre(cls, genre, to_dict=True, without_sessions=False):
         genre = session.query(cls).filter_by(genre=genre).order_by(cls.id).first()
         if not genre:
             return {}
         if to_dict:
-            return cls.to_dict(genre)
+            return cls.to_dict(genre, without_sessions)
         else:
             return genre
 
     @classmethod
-    def return_all(cls, offset, limit):
+    def return_all(cls, offset, limit, without_sessions=False):
         genres = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
-        return [cls.to_dict(genre) for genre in genres]
+        return [cls.to_dict(genre, without_sessions=without_sessions) for genre in genres]
 
     def save_to_db(self):
         session.add(self)
@@ -285,7 +301,7 @@ class GenresModel(base):
             return 404
 
     @staticmethod
-    def to_dict(genre, without_movies=False):
+    def to_dict(genre, without_movies=False, without_sessions=False):
         if without_movies:
             return {
                 "id": genre.id,
@@ -295,7 +311,7 @@ class GenresModel(base):
             return {
                 "id": genre.id,
                 "genre": genre.genre,
-                "movies": [MoviesModel.find_by_id(movie.movie_id) for movie in genre.movies]
+                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie in genre.movies]
             }
 
 
@@ -327,3 +343,284 @@ class MovieGenreModel(base):
             return 200
         else:
             return 404
+
+
+class AuditoriumModel(base):
+    __tablename__ = "auditorium"
+    id = Column(Integer, primary_key=True)
+    seats = Column(Integer, nullable=False)
+    movie_sessions = relationship("MovieSessionsModel", lazy='dynamic', cascade="all, delete-orphan",
+                                  foreign_keys="MovieSessionsModel.auditorium_id")
+
+    @classmethod
+    def find_by_id(cls, id, to_dict=True, without_sessions=False):
+        audit = session.query(cls).filter_by(id=id).first()
+        if not audit:
+            return {}
+        if to_dict:
+            return cls.to_dict(audit, without_sessions)
+        else:
+            return audit
+
+    @classmethod
+    def return_all(cls, offset, limit):
+        auditoriums = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(audit) for audit in auditoriums]
+
+    def save_to_db(self):
+        session.add(self)
+        session.commit()
+
+    @classmethod
+    def delete_by_id(cls, id):
+        audit = session.query(cls).filter_by(id=id).first()
+        if audit:
+            session.delete(audit)
+            session.commit()
+            return 200
+        else:
+            return 404
+
+    # TODO хз
+    @staticmethod
+    def to_dict(audit, without_sessions=False):
+        if without_sessions:
+            return {
+                "id": audit.id,
+                "seats": audit.seats
+            }
+        else:
+            return {
+                "id": audit.id,
+                "seats": audit.seats,
+                "movie_sessions": [MovieSessionsModel.to_dict(movie_session) for movie_session in audit.movie_sessions]
+            }
+
+
+class MovieSessionsModel(base):
+    __tablename__ = "moviesessions"
+    id = Column(Integer, primary_key=True)
+    movie_id = Column(Integer, ForeignKey('movies.id'))
+    movie = relationship("MoviesModel", back_populates='sessions')
+    auditorium_id = Column(Integer, ForeignKey('auditorium.id'))
+    auditorium = relationship("AuditoriumModel", back_populates='movie_sessions')
+    date = Column(DateTime())
+    tickets = relationship("TicketsModel", lazy='dynamic', cascade="all, delete-orphan",
+                           foreign_keys="TicketsModel.session_id")
+    remain_seats = Column(Integer, nullable=False)
+
+    @classmethod
+    def find_by_id(cls, id, to_dict=True):
+        movie_session = session.query(cls).filter_by(id=id).first()
+        if not movie_session:
+            return {}
+        if to_dict:
+            return cls.to_dict(movie_session)
+        else:
+            return movie_session
+
+    # TODO offset limit
+    @classmethod
+    def find_by_dates(cls, left_date, right_date, offset, limit):
+        movie_sessions = session.query(cls).filter(cls.date <= right_date, cls.date >= left_date) \
+            .order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(movie_session) for movie_session in movie_sessions]
+
+    # TODO offset limit
+    @classmethod
+    def find_by_movie_id(cls, movie_id, offset, limit):
+        movie_sessions = session.query(cls).filter_by(movie_id=movie_id) \
+            .order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(movie_session) for movie_session in movie_sessions]
+
+    # TODO offset limit
+    @classmethod
+    def find_by_auditorium_id(cls, auditorium_id, offset, limit):
+        movie_sessions = session.query(cls).filter_by(auditorium_id=auditorium_id) \
+            .order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(movie_session) for movie_session in movie_sessions]
+
+    # TODO offset limit
+    @classmethod
+    def return_all(cls, offset, limit):
+        movie_sessions = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(movie_session) for movie_session in movie_sessions]
+
+    @classmethod
+    def delete_by_id(cls, id):
+        movie_session = session.query(cls).filter_by(id=id).first()
+        if movie_session:
+            session.delete(movie_session)
+            session.commit()
+            return 200
+        else:
+            return 404
+
+    def save_to_db(self):
+        session.add(self)
+        session.commit()
+
+    @staticmethod
+    def to_dict(movie_session):
+        return {
+            "id": movie_session.id,
+            "date": movie_session.date,
+            "movie": MoviesModel.find_by_id(movie_session.movie_id, without_sessions=True),
+            "remain_seats": movie_session.remain_seats,
+            "auditorium": AuditoriumModel.find_by_id(movie_session.auditorium_id, without_sessions=True),
+            "tickets": [TicketsModel.to_dict(ticket) for ticket in movie_session.tickets]
+        }
+
+
+class UserModel(base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    firstname = Column(String(30), nullable=False)
+    lastname = Column(String(30), nullable=False)
+    email = Column(String(50), nullable=False)
+    hashed_password = Column(String(100), nullable=False)
+    is_admin = Column(Boolean(), default=False)
+    is_active = Column(Boolean(), default=False)
+    tickets = relationship("TicketsModel", lazy='dynamic', cascade="all, delete-orphan",
+                           foreign_keys="TicketsModel.user_id")
+
+    @classmethod
+    def find_by_id(cls, id, to_dict=True):
+        user = session.query(cls).filter_by(id=id).first()
+        if not user:
+            return {}
+        if user.is_active:
+            if to_dict:
+                return cls.to_dict(user)
+            else:
+                return user
+        else:
+            return {}
+
+    @classmethod
+    def find_by_name(cls, firstname, lastname, to_dict=True):
+        user = session.query(cls).filter_by(firstname=firstname, lastname=lastname) \
+            .order_by(cls.id).first()
+        if not user:
+            return {}
+        if user.is_active:
+            if to_dict:
+                return cls.to_dict(user)
+            else:
+                return user
+        else:
+            return {}
+
+    @classmethod
+    def find_by_email(cls, email, to_dict=True):
+        user = session.query(cls).filter_by(email=email).first()
+        if not user:
+            return {}
+        if user.is_active:
+            if to_dict:
+                return cls.to_dict(user)
+            else:
+                return user
+        else:
+            return {}
+
+    @classmethod
+    def return_all(cls, offset, limit):
+        users = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(user) for user in users if user.is_active]
+
+    @classmethod
+    def delete_by_id(cls, id):
+        user = session.query(cls).filter_by(id=id).first()
+        if user:
+            user.is_active = False
+            return 200
+        else:
+            return 404
+
+    def save_to_db(self):
+        session.add(self)
+        session.commit()
+
+    # TODO tickets
+    @staticmethod
+    def to_dict(user):
+        return {
+            "id": user.id,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "email": user.email,
+            "is_admin": user.is_admin,
+            "is_active": user.is_active,
+            "tickets": [TicketsModel.to_dict(ticket) for ticket in user.tickets]
+        }
+
+    @staticmethod
+    def generate_hash(password):
+        return sha256.hash(password)
+
+    @staticmethod
+    def verify_hash(password, hash):
+        return sha256.verify(password, hash)
+
+
+class TicketsModel(base):
+    __tablename__ = "tickets"
+    id = Column(Integer, primary_key=True)
+    session_id = Column(Integer, ForeignKey('moviesessions.id'))
+    session = relationship("MovieSessionsModel", back_populates='tickets')
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("UserModel", back_populates='tickets')
+    is_active = Column(Boolean(), default=False)
+
+    @classmethod
+    def find_by_id(cls, id, to_dict=True):
+        ticket = session.query(cls).filter_by(id=id).first()
+        if not ticket:
+            return {}
+        if to_dict:
+            return cls.to_dict(ticket)
+        else:
+            return ticket
+
+    # TODO offset limit
+    @classmethod
+    def find_by_session_id(cls, session_id, offset, limit):
+        tickets = session.query(cls).filter_by(session_id=session_id) \
+            .order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(ticket) for ticket in tickets]
+
+    # TODO offset limit
+    @classmethod
+    def find_by_user_id(cls, user_id, offset, limit):
+        tickets = session.query(cls).filter_by(user_id=user_id) \
+            .order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(ticket) for ticket in tickets]
+
+    @classmethod
+    def return_all(cls, offset, limit):
+        tickets = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
+        return [cls.to_dict(ticket) for ticket in tickets]
+
+    @classmethod
+    def delete_by_id(cls, id):
+        ticket = session.query(cls).filter_by(id=id).first()
+        if ticket:
+            ticket.is_active = False
+            return 200
+        else:
+            return 404
+
+    def save_to_db(self):
+        session.add(self)
+        session.commit()
+
+    # TODO tickets
+    @staticmethod
+    def to_dict(ticket):
+        return {
+            "id": ticket.id,
+            "session_id": ticket.session_id,
+            "user_id": ticket.user_id,
+            "is_active": ticket.is_active,
+        }

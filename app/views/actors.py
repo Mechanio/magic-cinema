@@ -11,15 +11,15 @@ def get_actors():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
     if firstname and lastname:
-        actor = ActorsModel.find_by_name(firstname, lastname)
+        actor = ActorsModel.find_by_name(firstname, lastname, without_sessions=True)
     else:
-        actor = ActorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+        actor = ActorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
     return jsonify(actor)
 
 
 @actors_bp.route("/actors/<int:id>", methods=["GET"])
 def get_actor(id):
-    actor = ActorsModel.find_by_id(id)
+    actor = ActorsModel.find_by_id(id, without_sessions=True)
     if not actor:
         return jsonify({"message": "Actor not found."}), 404
 

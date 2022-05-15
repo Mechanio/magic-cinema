@@ -71,12 +71,12 @@ def create_movie():
 
 @movies_bp.route("/movies/<int:id>", methods=["PATCH"])
 def update_movie(id):
-    name = request.args.get("name")
-    description = request.args.get("description")
-    year = request.args.get("year")
-    month = request.args.get("month")
-    day = request.args.get("day")
-    director_id = request.args.get("director_id")
+    name = request.json.get("name")
+    description = request.json.get("description")
+    year = request.json.get("year")
+    month = request.json.get("month")
+    day = request.json.get("day")
+    director_id = request.json.get("director_id")
     genres = request.json.get("genres")
     actors = request.json.get("actors")
 

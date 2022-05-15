@@ -9,16 +9,16 @@ genres_bp = Blueprint('genres', __name__)
 def get_genres():
     genre = request.args.get("genre")
     if genre:
-        genre = GenresModel.find_by_genre(genre)
+        genre = GenresModel.find_by_genre(genre, without_sessions=True)
     else:
-        genre = GenresModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+        genre = GenresModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
 
     return jsonify(genre)
 
 
 @genres_bp.route("/genres/<int:id>", methods=["GET"])
 def get_genre(id):
-    genre = GenresModel.find_by_id(id)
+    genre = GenresModel.find_by_id(id, without_sessions=True)
     if not genre:
         return jsonify({"message": "Genre not found."}), 404
 

@@ -1,0 +1,86 @@
+from flask import jsonify, request, Blueprint
+
+from app.models import TicketsModel, MovieSessionsModel
+from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+
+tickets_bp = Blueprint('tickets', __name__)
+
+
+@tickets_bp.route("/tickets/", methods=["GET"])
+def get_tickets():
+    session_id = request.args.get("session_id")
+    user_id = request.args.get("user_id")
+
+    if session_id:
+        tickets = TicketsModel.find_by_session_id(session_id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+    elif user_id:
+        tickets = TicketsModel.find_by_user_id(user_id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+    else:
+        tickets = TicketsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+
+    return jsonify(tickets)
+
+
+@tickets_bp.route("/tickets/<int:id>", methods=["GET"])
+def get_ticket(id):
+    ticket = TicketsModel.find_by_id(id)
+    if not ticket:
+        return jsonify({"message": "Ticket not found."}), 404
+
+    return jsonify(ticket)
+
+
+@tickets_bp.route("/tickets", methods=["POST"])
+def create_ticket():
+    if not request.json:
+        return jsonify({"message": 'Please, specify "session_id", "user_id"'}), 400
+
+    session_id = request.json.get("session_id")
+    user_id = request.json.get("user_id")
+
+    if not session_id or not user_id:
+        return jsonify({"message": 'Please, specify session_id, user_id.'}), 400
+
+    current_session = MovieSessionsModel.find_by_id(session_id, to_dict=False)
+    if current_session.remain_seats == 0:
+        return jsonify({"message": "No more seats available"})
+    current_session.remain_seats -= 1
+    current_session.save_to_db()
+
+    ticket = TicketsModel(session_id=session_id, user_id=user_id, is_active=True)
+    ticket.save_to_db()
+
+    return jsonify({"id": ticket.id}), 201
+
+
+@tickets_bp.route("/tickets/<int:id>", methods=["PATCH"])
+def update_ticket(id):
+    session_id = request.json.get("session_id")
+    user_id = request.json.get("user_id")
+    is_active = request.json.get("is_active")
+
+    ticket = TicketsModel.find_by_id(id, to_dict=False)
+    if not ticket:
+        return jsonify({"message": "Ticket not found."}), 404
+
+    if session_id:
+        current_session = MovieSessionsModel.find_by_id(ticket.session_id, to_dict=False)
+        current_session.remain_seats += 1
+        current_session.save_to_db()
+        ticket.session_id = session_id
+    if user_id:
+        ticket.user_id = user_id
+    if isinstance(is_active, bool):
+        ticket.is_active = is_active
+
+    ticket.save_to_db()
+
+    return jsonify({"message": "Updated"})
+
+
+@tickets_bp.route("/tickets/<int:id>", methods=["DELETE"])
+def delete_ticket(id):
+    ticket = TicketsModel.delete_by_id(id)
+    if ticket == 404:
+        return jsonify({"message": "Ticket not found."}), 404
+    return jsonify({"message": "Deleted"})

@@ -10,15 +10,15 @@ def get_directors():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
     if firstname and lastname:
-        director = DirectorsModel.find_by_name(firstname, lastname)
+        director = DirectorsModel.find_by_name(firstname, lastname, without_sessions=True)
     else:
-        director = DirectorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+        director = DirectorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
     return jsonify(director)
 
 
 @directors_bp.route("/director/<int:id>", methods=["GET"])
 def get_director(id):
-    director = DirectorsModel.find_by_id(id)
+    director = DirectorsModel.find_by_id(id, without_sessions=True)
     if not director:
         return jsonify({"message": "Director not found."}), 404
 
