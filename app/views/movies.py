@@ -1,9 +1,11 @@
 from datetime import date
 
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
 
 from app.models import MoviesModel, GenresModel, MovieGenreModel, ActorsModel, CastModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
 
 movies_bp = Blueprint('movies', __name__)
 
@@ -33,6 +35,8 @@ def get_movie(id):
 
 
 @movies_bp.route("/movies", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_movie():
     if not request.json:
         return jsonify({"message": 'Please, specify "name", "description", "release_date(year, month, day)", '
@@ -70,6 +74,8 @@ def create_movie():
 
 
 @movies_bp.route("/movies/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_movie(id):
     name = request.json.get("name")
     description = request.json.get("description")
@@ -121,6 +127,8 @@ def update_movie(id):
 
 
 @movies_bp.route("/movies/changes/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def delete_genre_or_cast(id):
 
     movie = MoviesModel.find_by_id(id, to_dict=False)
@@ -153,6 +161,8 @@ def delete_genre_or_cast(id):
 
 
 @movies_bp.route("/movies/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_movie(id):
     movie = MoviesModel.delete_by_id(id)
     if movie == 404:

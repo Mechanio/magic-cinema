@@ -1,6 +1,9 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
+
 from app.models import GenresModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
 
 genres_bp = Blueprint('genres', __name__)
 
@@ -24,7 +27,10 @@ def get_genre(id):
 
     return jsonify(genre)
 
+
 @genres_bp.route("/genres", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_genre():
     if not request.json:
         return jsonify({"message": 'Please, specify "genre".'}), 400
@@ -35,6 +41,8 @@ def create_genre():
 
 
 @genres_bp.route("/genres/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_genre(id):
     new_genre = request.json.get("genre")
 
@@ -50,6 +58,8 @@ def update_genre(id):
 
 
 @genres_bp.route("/genres/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_genre(id):
     genre = GenresModel.delete_by_id(id)
     if genre == 404:

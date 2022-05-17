@@ -12,25 +12,26 @@ def setup_database(app):
             base.metadata.create_all(db)
 
 
-# def setup_jwt(app):
-#     jwt = JWTManager(app)
-#
-#     from app.models import RevokedTokenModel
-#
-#     @jwt.token_in_blocklist_loader
-#     def check_if_token_in_blacklist(jwt_header, jwt_payload):
-#         jti = jwt_payload['jti']
-#         return RevokedTokenModel.is_jti_blacklisted(jti)
+def setup_jwt(app):
+    jwt = JWTManager(app)
+
+    from app.models import RevokedTokenModel
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blacklist(jwt_header, jwt_payload):
+        jti = jwt_payload['jti']
+        return RevokedTokenModel.is_jti_blacklisted(jti)
 
 
+# TODO jwt app
 def create_app():
     app = Flask(__name__)
+    app.config.from_object(config)
     setup_database(app)
-    # app.config.from_object(Config)
-    # setup_jwt(app)
+    setup_jwt(app)
 
     from .views import directors_bp, genres_bp, actors_bp, movies_bp, \
-        auditoriums_bp, movie_sessions_bp, users_bp, tickets_bp
+        auditoriums_bp, movie_sessions_bp, users_bp, tickets_bp, auth_bp
     app.register_blueprint(directors_bp)
     app.register_blueprint(genres_bp)
     app.register_blueprint(actors_bp)
@@ -39,6 +40,6 @@ def create_app():
     app.register_blueprint(movie_sessions_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(tickets_bp)
-
+    app.register_blueprint(auth_bp)
 
     return app

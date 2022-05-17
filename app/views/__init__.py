@@ -6,3 +6,4 @@ from .auditoriums import auditoriums_bp
 from .movie_sessions import movie_sessions_bp
 from .users import users_bp
 from .tickets import tickets_bp
+from .auth import auth_bp

@@ -1,7 +1,10 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
 
 from app.models import ActorsModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
+
 
 actors_bp = Blueprint('actors', __name__)
 
@@ -27,6 +30,8 @@ def get_actor(id):
 
 
 @actors_bp.route("/actors", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_actor():
     if not request.json:
         return jsonify({"message": 'Please, specify "firstname", and "lastname".'}), 400
@@ -42,6 +47,8 @@ def create_actor():
 
 
 @actors_bp.route("/actors/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_actor(id):
     firstname = request.json.get("firstname")
     lastname = request.json.get("lastname")
@@ -59,6 +66,8 @@ def update_actor(id):
 
 
 @actors_bp.route("/actors/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_actor(id):
     actor = ActorsModel.delete_by_id(id)
     if actor == 404:

@@ -1,11 +1,16 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required, get_jwt
+
 from app.models import UserModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
 
 users_bp = Blueprint('users', __name__)
 
 
 @users_bp.route("/users/", methods=["GET"])
+@jwt_required()
+@admin_group_required
 def get_users():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
@@ -20,6 +25,8 @@ def get_users():
 
 
 @users_bp.route("/users/<int:id>", methods=["GET"])
+@jwt_required()
+@admin_group_required
 def get_user(id):
     user = UserModel.find_by_id(id)
     if not user:
@@ -29,6 +36,8 @@ def get_user(id):
 
 
 @users_bp.route("/users", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_user():
     if not request.json:
         return jsonify({"message": 'Please, specify "firstname", "lastname", "email", "password" and "is_admin".'}), 400
@@ -52,34 +61,54 @@ def create_user():
 
 
 @users_bp.route("/users/<int:id>", methods=["PATCH"])
+@jwt_required()
 def update_user(id):
-    firstname = request.json.get("firstname")
-    lastname = request.json.get("lastname")
-    email = request.json.get("email")
-    password = request.json.get("password")
-    is_admin = request.json.get("is_admin")
-
     user = UserModel.find_by_id(id, to_dict=False)
     if not user:
         return jsonify({"message": "User not found."}), 404
+    email = get_jwt().get("sub")
+    current_user = UserModel.find_by_email(email, to_dict=False)
+    groups = get_jwt().get("groups")
+    if "admin" in groups:
+        firstname = request.json.get("firstname")
+        lastname = request.json.get("lastname")
+        email = request.json.get("email")
+        password = request.json.get("password")
+        is_admin = request.json.get("is_admin")
 
-    if firstname:
-        user.firstname = firstname
-    if lastname:
-        user.lastname = lastname
-    if email:
-        user.firstname = email
-    if isinstance(is_admin, bool):
-        user.is_admin = is_admin
-    if password:
-        user.hashed_password = UserModel.generate_hash(password)
-    user.save_to_db()
+        if firstname:
+            user.firstname = firstname
+        if lastname:
+            user.lastname = lastname
+        if email:
+            user.firstname = email
+        if isinstance(is_admin, bool):
+            user.is_admin = is_admin
+        if password:
+            user.hashed_password = UserModel.generate_hash(password)
+        user.save_to_db()
+    else:
+        password = request.json.get("password")
+        if current_user.id == user.id:
+            if password:
+                user.hashed_password = UserModel.generate_hash(password)
+            user.save_to_db()
+        else:
+            return jsonify({"message": "Not allowed"}), 404
     return jsonify({"message": "Updated"})
 
 
 @users_bp.route("/users/<int:id>", methods=["DELETE"])
+@jwt_required()
 def delete_user(id):
-    user = UserModel.delete_by_id(id)
-    if user == 404:
+    user = UserModel.find_by_id(id)
+    if not user:
         return jsonify({"message": "User not found."}), 404
+    email = get_jwt().get("sub")
+    current_user = UserModel.find_by_email(email, to_dict=False)
+    groups = get_jwt().get("groups")
+    if "admin" not in groups:
+        if current_user.id != user["user_id"]:
+            return jsonify({"message": "Not allowed"}), 404
+    user = UserModel.delete_by_id(id)
     return jsonify({"message": "Deleted"})

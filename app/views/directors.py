@@ -1,6 +1,10 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
+
 from app.models import DirectorsModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
+
 
 directors_bp = Blueprint('director', __name__)
 
@@ -26,6 +30,8 @@ def get_director(id):
 
 
 @directors_bp.route("/director", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_director():
     if not request.json:
         return jsonify({"message": 'Please, specify "firstname" and "lastname".'}), 400
@@ -41,6 +47,8 @@ def create_director():
 
 
 @directors_bp.route("/director/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_director(id):
     firstname = request.json.get("firstname")
     lastname = request.json.get("lastname")
@@ -58,6 +66,8 @@ def update_director(id):
 
 
 @directors_bp.route("/director/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_director(id):
     director = DirectorsModel.delete_by_id(id)
     if director == 404:

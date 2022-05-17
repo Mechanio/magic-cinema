@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
 
 from app.models import MovieSessionsModel, AuditoriumModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
 
 movie_sessions_bp = Blueprint('sessions', __name__)
 
@@ -39,6 +41,8 @@ def get_movie_session(id):
 
 
 @movie_sessions_bp.route("/sessions", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_movie_session():
     if not request.json:
         return jsonify({"message": 'Please, specify "movie_id", "auditorium_id", '
@@ -67,6 +71,8 @@ def create_movie_session():
 
 
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_movie_session(id):
     movie_id = request.json.get("movie_id")
     auditorium_id = request.json.get("auditorium_id")
@@ -101,6 +107,8 @@ def update_movie_session(id):
 
 
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_movie_session(id):
     movie_session = MovieSessionsModel.delete_by_id(id)
     if movie_session == 404:

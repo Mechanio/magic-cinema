@@ -1,7 +1,9 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import jwt_required
 
 from app.models import AuditoriumModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
+from app.decorators import admin_group_required
 
 auditoriums_bp = Blueprint('auditorium', __name__)
 
@@ -23,6 +25,8 @@ def get_auditorium(id):
 
 
 @auditoriums_bp.route("/auditorium", methods=["POST"])
+@jwt_required()
+@admin_group_required
 def create_auditorium():
     if not request.json:
         return jsonify({"message": 'Please, specify "seats".'}), 400
@@ -35,6 +39,8 @@ def create_auditorium():
 
 
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["PATCH"])
+@jwt_required()
+@admin_group_required
 def update_auditorium(id):
     seats = request.json.get("seats")
 
@@ -50,6 +56,8 @@ def update_auditorium(id):
 
 
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["DELETE"])
+@jwt_required()
+@admin_group_required
 def delete_auditorium(id):
     auditorium = AuditoriumModel.delete_by_id(id)
     if auditorium == 404:

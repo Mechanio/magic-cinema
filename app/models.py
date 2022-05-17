@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from passlib.hash import pbkdf2_sha256 as sha256
@@ -90,7 +92,7 @@ class MoviesModel(base):
                "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
                "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
                "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres],
-               "sessions": [MovieSessionsModel.to_dict(movie_session) for movie_session in movie.sessions]
+               "sessions": [MovieSessionsModel.to_dict(movie_session, without_tickets=True) for movie_session in movie.sessions]
             }
 
 
@@ -442,9 +444,9 @@ class MovieSessionsModel(base):
 
     # TODO offset limit
     @classmethod
-    def return_all(cls, offset, limit):
+    def return_all(cls, offset, limit, without_tickets=False):
         movie_sessions = session.query(cls).order_by(cls.id).offset(offset).limit(limit).all()
-        return [cls.to_dict(movie_session) for movie_session in movie_sessions]
+        return [cls.to_dict(movie_session, without_tickets=without_tickets) for movie_session in movie_sessions]
 
     @classmethod
     def delete_by_id(cls, id):
@@ -461,15 +463,24 @@ class MovieSessionsModel(base):
         session.commit()
 
     @staticmethod
-    def to_dict(movie_session):
-        return {
-            "id": movie_session.id,
-            "date": movie_session.date,
-            "movie": MoviesModel.find_by_id(movie_session.movie_id, without_sessions=True),
-            "remain_seats": movie_session.remain_seats,
-            "auditorium": AuditoriumModel.find_by_id(movie_session.auditorium_id, without_sessions=True),
-            "tickets": [TicketsModel.to_dict(ticket) for ticket in movie_session.tickets]
-        }
+    def to_dict(movie_session, without_tickets=False):
+        if without_tickets:
+            return {
+                "id": movie_session.id,
+                "date": movie_session.date,
+                "movie": MoviesModel.find_by_id(movie_session.movie_id, without_sessions=True),
+                "remain_seats": movie_session.remain_seats,
+                "auditorium": AuditoriumModel.find_by_id(movie_session.auditorium_id, without_sessions=True),
+            }
+        else:
+            return {
+                "id": movie_session.id,
+                "date": movie_session.date,
+                "movie": MoviesModel.find_by_id(movie_session.movie_id, without_sessions=True),
+                "remain_seats": movie_session.remain_seats,
+                "auditorium": AuditoriumModel.find_by_id(movie_session.auditorium_id, without_sessions=True),
+                "tickets": [TicketsModel.to_dict(ticket) for ticket in movie_session.tickets]
+            }
 
 
 class UserModel(base):
@@ -542,7 +553,6 @@ class UserModel(base):
         session.add(self)
         session.commit()
 
-    # TODO tickets
     @staticmethod
     def to_dict(user):
         return {
@@ -615,7 +625,6 @@ class TicketsModel(base):
         session.add(self)
         session.commit()
 
-    # TODO tickets
     @staticmethod
     def to_dict(ticket):
         return {
@@ -624,3 +633,19 @@ class TicketsModel(base):
             "user_id": ticket.user_id,
             "is_active": ticket.is_active,
         }
+
+
+class RevokedTokenModel(base):
+    __tablename__ = 'revoked_tokens'
+    id_ = Column(Integer, primary_key=True)
+    jti = Column(String(120))
+    blacklisted_on = Column(DateTime, default=datetime.utcnow)
+
+    def add(self):
+        session.add(self)
+        session.commit()
+
+    @classmethod
+    def is_jti_blacklisted(cls, jti):
+        query = session.query(cls).filter_by(jti=jti).first()
+        return bool(query)
