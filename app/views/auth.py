@@ -34,7 +34,7 @@ def register():
         return jsonify({"message": 'Please, specify "firstname", "lastname", "email", "password" and "is_admin".'}), 400
 
     if UserModel.find_by_email(email, to_dict=False):
-        return {"message": f"Email {email} already used"}
+        return {"message": f"Email {email} already used"}, 401
 
     user = UserModel(firstname=firstname, lastname=lastname, email=email,
                      hashed_password=UserModel.generate_hash(password), is_admin=is_admin, is_active=True)
@@ -59,7 +59,7 @@ def register():
 def login():
     """Method for logination. Returns access and refresh tokens."""
     if not request.json or not request.json.get("email") or not request.json.get("password"):
-        return jsonify({"message": 'Please, provide "email" and "password" in body.'}), 400
+        return jsonify({"message": 'Please, provide "email" and "password" in body'}), 400
 
     email = request.json["email"]
     password = request.json["password"]
@@ -91,7 +91,7 @@ def post():
         return {"message": f"User with email {email} doesn't exist"}, 401
     groups = get_groups(current_user)
     access_token = create_access_token(identity=current_user_identity, additional_claims=groups)
-    return {'access_token': access_token}
+    return {'access_token': access_token}, 201
 
 
 @auth_bp.route("/auth/logout-access", methods=["POST"])
@@ -101,7 +101,7 @@ def logout_access():
     try:
         revoked_token = RevokedTokenModel(jti=jti)
         revoked_token.add()
-        return {'message': 'Access token has been revoked'}
+        return {'message': 'Access token has been revoked'}, 201
     except Exception as e:
         return {
             "message": "Something went wrong while revoking token",

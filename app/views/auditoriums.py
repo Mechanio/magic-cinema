@@ -10,7 +10,9 @@ auditoriums_bp = Blueprint('auditorium', __name__)
 
 @auditoriums_bp.route("/auditorium/", methods=["GET"])
 def get_auditoriums():
-    auditoriums = AuditoriumModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
+    auditoriums = AuditoriumModel.return_all(offset, limit)
 
     return jsonify(auditoriums)
 

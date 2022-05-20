@@ -1,0 +1,1723 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "Cinema API"
+  description: "This is a Cinema API where you can execute CRUD operations on 
+  movies, actors, genres, sessions, customers and auditoriums"
+servers:
+  - url: http://127.0.0.1:5000
+tags:
+  - name: "Actors"
+    description: "About the actors and the movies in which they are staring"
+  - name: "Auditoriums"
+    description: "About the auditoriums of cinema"
+  - name: "Authentication"
+    description: "Authentication of customers or admins"
+  - name: "Directors"
+    description: "Directors of movies"
+  - name: "Genres"
+    description: "Genres of movies"
+  - name: "Movie sessions"
+  - name: "Movies"
+    description: "Movies with their genres, cast, sessions"
+  - name: "Tickets"
+    description: "Customer tickets for movie sessions"
+  - name: "Users"
+    description: "Customer or administrator information"
+paths:
+  /actors:
+    get:
+      tags:
+        - "Actors"
+      summary: "Get actors information"
+      parameters:
+        - name: "firstname"
+          in: "query"
+          description: "Firstname of actor"
+          required: false
+          schema:
+            type: "string"
+        - name: "lastname"
+          in: "query"
+          description: "Lastname of actor"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorsOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Actors"
+      summary: "Create new actor"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'firstname' and 'lastname'"
+
+  /actors/{id}:
+    get:
+      tags:
+        - "Actors"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of actor"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get actor by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorOut'
+        '404':
+          description: "Actor not found"
+          content:
+            application/json:
+              example:
+                message: "Actor not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Actors"
+      summary: "Update actor's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of actor"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong actor's id"
+          content:
+            application/json:
+              example:
+                message: "Actor not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Actors"
+      summary: "Delete actor"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the actor"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong actor's id"
+          content:
+            application/json:
+              example:
+                message: "Actor not found"
+  /auditorium:
+    get:
+      tags:
+        - "Auditoriums"
+      summary: "Get auditoriums information"
+      parameters:
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriumsOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Auditoriums"
+      summary: "Create new auditorium"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'seats'"
+
+  /auditorium/{id}:
+    get:
+      tags:
+        - "Auditoriums"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of auditorium"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get auditorium by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriumOut'
+        '404':
+          description: "Auditorium not found"
+          content:
+            application/json:
+              example:
+                message: "Auditorium not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Auditoriums"
+      summary: "Update auditorium's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of actor"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditoriumIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong auditorium's id"
+          content:
+            application/json:
+              example:
+                message: "Auditorium not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Auditoriums"
+      summary: "Delete auditorium"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the auditorium"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong auditorium's id"
+          content:
+            application/json:
+              example:
+                message: "Auditorium not found"
+  /auth/registration:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Registration of a new user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+                access_token: "{access_token}"
+                refresh_token: "{refresh_token}"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'firstname', 'lastname', 'email', 'password' and 'is_admin'"
+        '401':
+          description: "Wrong input email"
+          content:
+            application/json:
+              example:
+                message: "Email {email} already used"
+        '500':
+          description: "Error occurred"
+          content:
+            application/json:
+              example:
+                message: "Something went wrong while creating"
+                error: "{error}"
+  /auth/login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Login as a user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Logged in as {user.firstname, user.lastname, user.email}"
+                access_token: "{access_token}"
+                refresh_token: "{refresh_token}"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, provide 'email' and 'password' in body"
+        '401':
+          description: "Wrong input email or password"
+          content:
+            application/json:
+              example:
+                message: "User with email {email} doesn't exist"
+  /auth/refresh:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Authentication"
+      summary: "Refresh access token"
+      description: "This can only be done by the logged in user with refresh token"
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                access_token: "{access_token}"
+        '401':
+          description: "Wrong input email"
+          content:
+            application/json:
+              example:
+                message: "User with email {email} doesn't exist"
+        '422':
+          description: "Refresh token required"
+          content:
+            application/json:
+              example:
+                msg: "Only refresh tokens are allowed"
+  /auth/logout-access:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Authentication"
+      summary: "Revoke access token"
+      description: "This can only be done by the logged in user"
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Access token has been revoked"
+        '500':
+          description: "Error occurred"
+          content:
+            application/json:
+              example:
+                message: "Something went wrong while creating"
+                error: "{error}"
+  /auth/logout-refresh:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Authentication"
+      summary: "Revoke refresh token"
+      description: "This can only be done by the logged in user with refresh token"
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Refresh token has been revoked"
+        '500':
+          description: "Error occurred"
+          content:
+            application/json:
+              example:
+                message: "Something went wrong while creating"
+                error: "{error}"
+  /director:
+    get:
+      tags:
+        - "Directors"
+      summary: "Get directors information"
+      parameters:
+        - name: "firstname"
+          in: "query"
+          description: "Firstname of director"
+          required: false
+          schema:
+            type: "string"
+        - name: "lastname"
+          in: "query"
+          description: "Lastname of director"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectorsOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Directors"
+      summary: "Create new director"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectorIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'firstname' and 'lastname'"
+  /director/{id}:
+    get:
+      tags:
+        - "Directors"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of director"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get director by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectorOut'
+        '404':
+          description: "Director not found"
+          content:
+            application/json:
+              example:
+                message: "Director not found"
+
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Directors"
+      summary: "Update director's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of director"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectorIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong director's id"
+          content:
+            application/json:
+              example:
+                message: "Director not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Directors"
+      summary: "Delete director"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the director"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong director's id"
+          content:
+            application/json:
+              example:
+                message: "Director not found"
+  /genres:
+    get:
+      tags:
+        - "Genres"
+      summary: "Get genres information"
+      parameters:
+        - name: "genre"
+          in: "query"
+          description: "Genre name"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenresOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Genres"
+      summary: "Create new genre"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'genre'"
+  /genres/{id}:
+    get:
+      tags:
+        - "Genres"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of genre"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get genre by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreOut'
+        '404':
+          description: "Genre not found"
+          content:
+            application/json:
+              example:
+                message: "Genre not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Genres"
+      summary: "Update genre's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of genre"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong genre's id"
+          content:
+            application/json:
+              example:
+                message: "Genre not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Genres"
+      summary: "Delete genre"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the genre"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong genre's id"
+          content:
+            application/json:
+              example:
+                message: "Genre not found"
+  /sessions:
+    get:
+      tags:
+        - "Movie sessions"
+      summary: "Get movies sessions information"
+      parameters:
+        - name: "movie_id"
+          in: "query"
+          description: "Movie ID"
+          required: false
+          schema:
+            type: "string"
+        - name: "auditorium_id"
+          in: "query"
+          description: "Auditorium ID"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieSessionDateIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieSessionsOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movie sessions"
+      summary: "Create new movie session"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieSessionIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify movie_id, auditorium_id, year, month, day, hour and minute"
+  /sessions/{id}:
+    get:
+      tags:
+        - "Movie sessions"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of movie session"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get movie session by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieSessionOut'
+        '404':
+          description: "Movie session not found"
+          content:
+            application/json:
+              example:
+                message: "Movie session not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movie sessions"
+      summary: "Update movie sessions's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of movie session"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieSessionIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong movie session's id"
+          content:
+            application/json:
+              example:
+                message: "Movie session not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movie sessions"
+      summary: "Delete movie session"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the movie session"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong movie session's id"
+          content:
+            application/json:
+              example:
+                message: "Movie session not found"
+  /movies:
+    get:
+      tags:
+        - "Movies"
+      summary: "Get movies information"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: "Movie name"
+          required: false
+          schema:
+            type: "string"
+        - name: "director_id"
+          in: "query"
+          description: "Director ID"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoviesOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movies"
+      summary: "Create new movie"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify name, description, year, month, day, director_id, genres and actors."
+  /movies/{id}:
+    get:
+      tags:
+        - "Movies"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of movie"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get movie by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieOut'
+        '404':
+          description: "Movie not found"
+          content:
+            application/json:
+              example:
+                message: "Movie not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movies"
+      summary: "Update movie's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of movie session"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong movie's id"
+          content:
+            application/json:
+              example:
+                message: "Movie not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movies"
+      summary: "Delete movie"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the movie"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong movies id"
+          content:
+            application/json:
+              example:
+                message: "Movie not found"
+  /movies/changes/{id}:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Movies"
+      summary: "Delete movie's genre or actor"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of movie session"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieSpecialPatchIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+  /tickets:
+    get:
+      tags:
+        - "Tickets"
+      security:
+        - bearerAuth: []
+      summary: "Get tickets information"
+      description: "This can only be done by the logged in user"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "Session ID (only as admin)"
+          required: false
+          schema:
+            type: "string"
+        - name: "user_id"
+          in: "query"
+          description: "User ID (only as admin)"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketsOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Tickets"
+      summary: "Create new ticket"
+      description: "This can only be done by the logged in user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify session_id"
+  /tickets/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Tickets"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of ticket"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get ticket by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketOut'
+        '404':
+          description: "Ticket not found"
+          content:
+            application/json:
+              example:
+                message: "Ticket not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Tickets"
+      summary: "Update ticket's information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of ticket"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketPatchIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '403':
+          description: "No more tickets"
+          content:
+            application/json:
+              example:
+                message: "No more seats available"
+        '404':
+          description: "Wrong ticket's id"
+          content:
+            application/json:
+              example:
+                message: "Ticket not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Tickets"
+      summary: "Delete ticket"
+      description: "This can only be done by the logged in user"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the ticket"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong ticket's id"
+          content:
+            application/json:
+              example:
+                message: "Ticket not found"
+  /users:
+    get:
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      summary: "Get users information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "firstname"
+          in: "query"
+          description: "Firstname of user"
+          required: false
+          schema:
+            type: "string"
+        - name: "lastname"
+          in: "query"
+          description: "Lastname of user"
+          required: false
+          schema:
+            type: "string"
+        - name: "email"
+          in: "query"
+          description: "Email of user"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersOut'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      summary: "Create new user"
+      description: "This can only be done by the logged in admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIn'
+      responses:
+        '201':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                id: "5"
+        '400':
+          description: "Wrong input data"
+          content:
+            application/json:
+              example:
+                message: "Please, specify 'firstname', 'lastname', 'email', 'password' and 'is_admin'"
+        '401':
+          description: "Wrong input email"
+          content:
+            application/json:
+              example:
+                message: "Email {email} already used"
+  /users/{id}:
+    get:
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "User ID"
+          required: true
+          schema:
+            type: "integer"
+      summary: "Get user by id"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '404':
+          description: "User not found"
+          content:
+            application/json:
+              example:
+                message: "User not found"
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      summary: "Update user's information"
+      description: "This can only be done by the logged in user"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of actor"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIn'
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Updated"
+        '404':
+          description: "Wrong user's id"
+          content:
+            application/json:
+              example:
+                message: "User not found"
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Id of the user"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              example:
+                message: "Deleted"
+        '404':
+          description: "Wrong user's id"
+          content:
+            application/json:
+              example:
+                message: "User not found"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ActorOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        firstname:
+          type: "string"
+          example: "Emma"
+        lastname:
+          type: "string"
+          example: "Stone"
+        movies:
+          type: "array"
+          example: "[]"
+    ActorsOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/ActorOut'
+    ActorIn:
+      type: "object"
+      properties:
+        firstname:
+          type: "string"
+          example: "Emma"
+        lastname:
+          type: "string"
+          example: "Stone"
+    AuditoriumOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        seats:
+          type: "integer"
+          example: 60
+        movie_sessions:
+          type: "array"
+          example: "[]"
+    AuditoriumsOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/AuditoriumOut'
+    AuditoriumIn:
+      type: "object"
+      properties:
+        seats:
+          type: "integer"
+          example: 60
+    UserIn:
+      type: "object"
+      properties:
+        firstname:
+          type: "string"
+          example: "John"
+        lastname:
+          type: "string"
+          example: "Doe"
+        email:
+          type: "string"
+          example: "test1@gmail.com"
+        password:
+          type: "string"
+          example: "password"
+        is_admin:
+          type: "boolean"
+          example: false
+    LogIn:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "test1@gmail.com"
+        password:
+          type: "string"
+          example: "password"
+    DirectorOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        firstname:
+          type: "string"
+          example: "John"
+        lastname:
+          type: "string"
+          example: "Carpenter"
+        movies:
+          type: "array"
+          example: "[]"
+    DirectorsOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/DirectorOut'
+    DirectorIn:
+      type: "object"
+      properties:
+        firstname:
+          type: "string"
+          example: "George"
+        lastname:
+          type: "string"
+          example: "Miller"
+    GenreOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        genre:
+          type: "string"
+          example: "comedy"
+        movies:
+          type: "array"
+          example: "[]"
+    GenresOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/GenreOut'
+    GenreIn:
+      type: "object"
+      properties:
+        genre:
+          type: "string"
+          example: "drama"
+    MovieSessionDateIn:
+      type: "object"
+      properties:
+        left_date:
+          type: "array"
+          example: [year, month, day]
+        right_date:
+          type: "array"
+          example: [year, month, day]
+    MovieSessionOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        date:
+          type: "string"
+          example: "Sun, 15 May 2022 14:30:00 GMT"
+        auditorium:
+          type: "array"
+          example: "[]"
+        movie_id:
+          type: "integer"
+          example: 2
+        movies:
+          type: "array"
+          example: "[]"
+        tickets:
+          type: "array"
+          example: "[]"
+        remain_seats:
+          type: "integer"
+          example: 22
+        is_active:
+          type: "boolean"
+          example: true
+    MovieSessionsOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/MovieSessionOut'
+    MovieSessionIn:
+      type: "object"
+      properties:
+        movie_id:
+          type: "integer"
+          example: 2
+        auditorium_id:
+          type: "integer"
+          example: 2
+        year:
+          type: "integer"
+          example: 2022
+        month:
+          type: "integer"
+          example: 5
+        day:
+          type: "integer"
+          example: 15
+        hour:
+          type: "integer"
+          example: 15
+        minute:
+          type: "integer"
+          example: 30
+    MovieOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        release_date:
+          type: "string"
+          example: "Sun, 15 May 2022 14:30:00 GMT"
+        name:
+          type: "string"
+          example: "Evil Dead"
+        description:
+          type: "string"
+          example: "Cool movie"
+        sessions:
+          type: "array"
+          example: "[]"
+        genres:
+          type: "array"
+          example: "[]"
+        actors:
+          type: "array"
+          example: "[]"
+    MoviesOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/MovieOut'
+    MovieIn:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Evil Dead"
+        description:
+          type: "string"
+          example: "Cool movie"
+        director_id:
+          type: "integer"
+          example: 2
+        year:
+          type: "integer"
+          example: 2022
+        month:
+          type: "integer"
+          example: 5
+        day:
+          type: "integer"
+          example: 15
+        genres:
+          type: "array"
+          example: "['horror', 'slasher']"
+        actors:
+          type: "array"
+          example: "['Bruce Campbell', 'Someone Else']"
+    MovieSpecialPatchIn:
+      type: "object"
+      properties:
+        genres:
+          type: "array"
+          example: "['horror', 'slasher']"
+        actors:
+          type: "array"
+          example: "['Bruce Campbell', 'Someone Else']"
+    TicketOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        session_id:
+          type: "integer"
+          example: 2
+        user_id:
+          type: "integer"
+          example: 2
+        is_active:
+          type: "boolean"
+          example: true
+    TicketsOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/TicketOut'
+    TicketIn:
+      type: "object"
+      properties:
+        session_id:
+          type: "integer"
+          example: 2
+        user_id:
+          type: "integer"
+          example: 2
+    TicketPatchIn:
+      type: "object"
+      properties:
+        session_id:
+          type: "integer"
+          example: 2
+        user_id:
+          type: "integer"
+          example: 2
+        is_active:
+          type: "boolean"
+          example: true
+    UserOut:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 2
+        firstname:
+          type: "string"
+          example: "John"
+        lastname:
+          type: "string"
+          example: "Doe"
+        email:
+          type: "string"
+          example: "sample@mail.com"
+        is_admin:
+          type: "boolean"
+          example: false
+        is_active:
+          type: "boolean"
+          example: true
+    UsersOut:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/UserOut'

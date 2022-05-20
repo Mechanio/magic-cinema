@@ -15,17 +15,20 @@ def get_tickets():
     email = get_jwt().get("sub")
     current_user = UserModel.find_by_email(email, to_dict=False)
     groups = get_jwt().get("groups")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
+
     if "admin" in groups:
         session_id = request.args.get("session_id")
         user_id = request.args.get("user_id")
         if session_id:
-            tickets = TicketsModel.find_by_session_id(session_id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+            tickets = TicketsModel.find_by_session_id(session_id, offset, limit)
         elif user_id:
-            tickets = TicketsModel.find_by_user_id(user_id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+            tickets = TicketsModel.find_by_user_id(user_id, offset, limit)
         else:
-            tickets = TicketsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+            tickets = TicketsModel.return_all(offset, limit)
     else:
-        tickets = TicketsModel.find_by_user_id(current_user.id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+        tickets = TicketsModel.find_by_user_id(current_user.id, offset, limit)
 
     return jsonify(tickets)
 
@@ -107,7 +110,7 @@ def update_ticket(id):
         ticket.session_id = session_id
         new_current_session = MovieSessionsModel.find_by_id(session_id, to_dict=False)
         if new_current_session.remain_seats == 0:
-            return jsonify({"message": "No more seats available"})
+            return jsonify({"message": "No more seats available"}), 403
         new_current_session.remain_seats -= 1
         new_current_session.save_to_db()
     if user_id:

@@ -15,12 +15,14 @@ def get_users():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
     email = request.args.get("email")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
     if firstname and lastname:
         user = UserModel.find_by_name(firstname, lastname)
     elif email:
         user = UserModel.find_by_email(email)
     else:
-        user = UserModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+        user = UserModel.return_all(offset, limit)
     return jsonify(user)
 
 
@@ -52,7 +54,7 @@ def create_user():
         return jsonify({"message": 'Please, specify "firstname", "lastname", "email", "password" and "is_admin".'}), 400
 
     if UserModel.find_by_email(email, to_dict=False):
-        return {"message": f"Email {email} already used"}
+        return {"message": f"Email {email} already used"}, 401
 
     user = UserModel(firstname=firstname, lastname=lastname, email=email,
                      hashed_password=UserModel.generate_hash(password), is_admin=is_admin, is_active=True)
@@ -69,21 +71,29 @@ def update_user(id):
     email = get_jwt().get("sub")
     current_user = UserModel.find_by_email(email, to_dict=False)
     groups = get_jwt().get("groups")
+    errors = {}
     if "admin" in groups:
         firstname = request.json.get("firstname")
         lastname = request.json.get("lastname")
         email = request.json.get("email")
         password = request.json.get("password")
         is_admin = request.json.get("is_admin")
+        is_active = request.json.get("is_active")
 
         if firstname:
             user.firstname = firstname
         if lastname:
             user.lastname = lastname
         if email:
-            user.firstname = email
+            if not UserModel.find_by_email(email, to_dict=False):
+                user.email = email
+            else:
+                errors = {"message": f"Updated, but email {email} already used"}
+
         if isinstance(is_admin, bool):
             user.is_admin = is_admin
+        if isinstance(is_active, bool):
+            user.is_active = is_active
         if password:
             user.hashed_password = UserModel.generate_hash(password)
         user.save_to_db()
@@ -95,7 +105,10 @@ def update_user(id):
             user.save_to_db()
         else:
             return jsonify({"message": "Not allowed"}), 404
-    return jsonify({"message": "Updated"})
+    if errors:
+        assert jsonify(errors)
+    else:
+        return jsonify({"message": "Updated"})
 
 
 @users_bp.route("/users/<int:id>", methods=["DELETE"])
@@ -108,7 +121,7 @@ def delete_user(id):
     current_user = UserModel.find_by_email(email, to_dict=False)
     groups = get_jwt().get("groups")
     if "admin" not in groups:
-        if current_user.id != user["user_id"]:
+        if current_user.id != user["id"]:
             return jsonify({"message": "Not allowed"}), 404
     user = UserModel.delete_by_id(id)
     return jsonify({"message": "Deleted"})

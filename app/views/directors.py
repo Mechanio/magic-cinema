@@ -13,10 +13,12 @@ directors_bp = Blueprint('director', __name__)
 def get_directors():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
     if firstname and lastname:
         director = DirectorsModel.find_by_name(firstname, lastname, without_sessions=True)
     else:
-        director = DirectorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
+        director = DirectorsModel.return_all(offset, limit, without_sessions=True)
     return jsonify(director)
 
 

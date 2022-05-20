@@ -11,10 +11,12 @@ genres_bp = Blueprint('genres', __name__)
 @genres_bp.route("/genres/", methods=["GET"])
 def get_genres():
     genre = request.args.get("genre")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
     if genre:
         genre = GenresModel.find_by_genre(genre, without_sessions=True)
     else:
-        genre = GenresModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
+        genre = GenresModel.return_all(offset, limit, without_sessions=True)
 
     return jsonify(genre)
 

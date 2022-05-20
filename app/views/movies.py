@@ -14,13 +14,15 @@ movies_bp = Blueprint('movies', __name__)
 def get_movies():
     name = request.args.get("name")
     director_id = request.args.get("director_id")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
 
     if name:
         movies = MoviesModel.find_by_name(name)
     elif director_id:
-        movies = MoviesModel.find_by_director_id(director_id, OFFSET_DEFAULT, LIMIT_DEFAULT)
+        movies = MoviesModel.find_by_director_id(director_id, offset, limit)
     else:
-        movies = MoviesModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT)
+        movies = MoviesModel.return_all(offset, limit)
 
     return jsonify(movies)
 

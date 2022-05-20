@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from config import Config as config
 from .database.database import db, base
@@ -23,12 +24,19 @@ def setup_jwt(app):
         return RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-# TODO jwt app
+def setup_swagger(app):
+    SWAGGER_URL = '/swagger'
+    API_URL = '/static/swagger.yaml'
+    swagger_bp = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': "Cinema API"})
+    app.register_blueprint(swagger_bp, url_prefix=SWAGGER_URL)
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
     setup_database(app)
     setup_jwt(app)
+    setup_swagger(app)
 
     from .views import directors_bp, genres_bp, actors_bp, movies_bp, \
         auditoriums_bp, movie_sessions_bp, users_bp, tickets_bp, auth_bp

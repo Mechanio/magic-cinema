@@ -13,10 +13,12 @@ actors_bp = Blueprint('actors', __name__)
 def get_actors():
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
     if firstname and lastname:
         actor = ActorsModel.find_by_name(firstname, lastname, without_sessions=True)
     else:
-        actor = ActorsModel.return_all(OFFSET_DEFAULT, LIMIT_DEFAULT, without_sessions=True)
+        actor = ActorsModel.return_all(offset, limit, without_sessions=True)
     return jsonify(actor)
 
 
