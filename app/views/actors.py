@@ -27,7 +27,7 @@ def get_actors():
     return jsonify(actor)
 
 
-@actors_bp.route("/actors/<int:id>", methods=["GET"])
+@actors_bp.route("/actors/<int:id_>", methods=["GET"])
 def get_actor(id_):
     """
     Get actor info by id
@@ -64,7 +64,7 @@ def create_actor():
     return jsonify({"id": actor.id}), 201
 
 
-@actors_bp.route("/actors/<int:id>", methods=["PATCH"])
+@actors_bp.route("/actors/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_actor(id_):
@@ -89,7 +89,7 @@ def update_actor(id_):
     return jsonify({"message": "Updated"}), 200
 
 
-@actors_bp.route("/actors/<int:id>", methods=["DELETE"])
+@actors_bp.route("/actors/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_actor(id_):

@@ -46,7 +46,7 @@ def get_inactive_users():
     return jsonify(user)
 
 
-@users_bp.route("/users/<int:id>", methods=["GET"])
+@users_bp.route("/users/<int:id_>", methods=["GET"])
 @jwt_required()
 @admin_group_required
 def get_user(id_):
@@ -93,7 +93,7 @@ def create_user():
     return jsonify({"id": user.id}), 201
 
 
-@users_bp.route("/users/<int:id>", methods=["PATCH"])
+@users_bp.route("/users/<int:id_>", methods=["PATCH"])
 @jwt_required()
 def update_user(id_):
     """
@@ -148,7 +148,7 @@ def update_user(id_):
         return jsonify({"message": "Updated"})
 
 
-@users_bp.route("/users/<int:id>", methods=["DELETE"])
+@users_bp.route("/users/<int:id_>", methods=["DELETE"])
 @jwt_required()
 def delete_user(id_):
     """
@@ -166,5 +166,5 @@ def delete_user(id_):
     if "admin" not in groups:
         if current_user.id != user["id"]:
             return jsonify({"message": "Not allowed"}), 405
-    user = UserModel.delete_by_id(id)
+    user = UserModel.delete_by_id(id_)
     return jsonify({"message": "Deleted"})

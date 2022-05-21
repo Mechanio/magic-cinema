@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
-from config import Config as config
+from config import Config
 from .database.database import db, base
 
 
@@ -33,7 +33,7 @@ def setup_swagger(app):
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(config)
+    app.config.from_object(Config)
     setup_database(app)
     setup_jwt(app)
     setup_swagger(app)

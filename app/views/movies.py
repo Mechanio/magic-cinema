@@ -32,7 +32,7 @@ def get_movies():
     return jsonify(movies)
 
 
-@movies_bp.route("/movies/<int:id>", methods=["GET"])
+@movies_bp.route("/movies/<int:id_>", methods=["GET"])
 def get_movie(id_):
     """
     Get movie info by id
@@ -91,7 +91,7 @@ def create_movie():
     return jsonify({"id": movie.id}), 201
 
 
-@movies_bp.route("/movies/<int:id>", methods=["PATCH"])
+@movies_bp.route("/movies/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_movie(id_):
@@ -150,7 +150,7 @@ def update_movie(id_):
     return jsonify({"message": "Updated"})
 
 
-@movies_bp.route("/movies/changes/<int:id>", methods=["PATCH"])
+@movies_bp.route("/movies/changes/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def delete_genre_or_cast(id_):
@@ -189,7 +189,7 @@ def delete_genre_or_cast(id_):
     return jsonify(result)
 
 
-@movies_bp.route("/movies/<int:id>", methods=["DELETE"])
+@movies_bp.route("/movies/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_movie(id_):

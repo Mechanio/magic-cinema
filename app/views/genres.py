@@ -26,7 +26,7 @@ def get_genres():
     return jsonify(genre)
 
 
-@genres_bp.route("/genres/<int:id>", methods=["GET"])
+@genres_bp.route("/genres/<int:id_>", methods=["GET"])
 def get_genre(id_):
     """
     Get genre info by id
@@ -58,7 +58,7 @@ def create_genre():
     return jsonify({"id": genre.id}), 201
 
 
-@genres_bp.route("/genres/<int:id>", methods=["PATCH"])
+@genres_bp.route("/genres/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_genre(id_):
@@ -81,7 +81,7 @@ def update_genre(id_):
     return jsonify({"message": "Updated"})
 
 
-@genres_bp.route("/genres/<int:id>", methods=["DELETE"])
+@genres_bp.route("/genres/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_genre(id_):

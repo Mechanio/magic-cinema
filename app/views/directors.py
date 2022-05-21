@@ -27,7 +27,7 @@ def get_directors():
     return jsonify(director)
 
 
-@directors_bp.route("/director/<int:id>", methods=["GET"])
+@directors_bp.route("/director/<int:id_>", methods=["GET"])
 def get_director(id_):
     """
     Get director info by id
@@ -64,7 +64,7 @@ def create_director():
     return jsonify({"id": director.id}), 201
 
 
-@directors_bp.route("/director/<int:id>", methods=["PATCH"])
+@directors_bp.route("/director/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_director(id_):
@@ -89,7 +89,7 @@ def update_director(id_):
     return jsonify({"message": "Updated"}), 200
 
 
-@directors_bp.route("/director/<int:id>", methods=["DELETE"])
+@directors_bp.route("/director/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_director(id_):

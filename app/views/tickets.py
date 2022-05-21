@@ -67,7 +67,7 @@ def get_inactive_tickets():
     return jsonify(tickets)
 
 
-@tickets_bp.route("/tickets/<int:id>", methods=["GET"])
+@tickets_bp.route("/tickets/<int:id_>", methods=["GET"])
 @jwt_required()
 def get_ticket(id_):
     """
@@ -136,7 +136,7 @@ def create_ticket():
     return jsonify({"id": ticket.id}), 201
 
 
-@tickets_bp.route("/tickets/<int:id>", methods=["PATCH"])
+@tickets_bp.route("/tickets/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_ticket(id_):
@@ -174,7 +174,7 @@ def update_ticket(id_):
     return jsonify({"message": "Updated"})
 
 
-@tickets_bp.route("/tickets/<int:id>", methods=["DELETE"])
+@tickets_bp.route("/tickets/<int:id_>", methods=["DELETE"])
 @jwt_required()
 def delete_ticket(id_):
     """
@@ -196,5 +196,5 @@ def delete_ticket(id_):
     current_session = MovieSessionsModel.find_by_id(ticket.session_id, to_dict=False)
     current_session.remain_seats += 1
     current_session.save_to_db()
-    ticket = TicketsModel.delete_by_id(id)
+    ticket = TicketsModel.delete_by_id(id_)
     return jsonify({"message": "Deleted"})

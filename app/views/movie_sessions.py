@@ -54,7 +54,7 @@ def get_inactive_movies_sessions():
     return jsonify(user)
 
 
-@movie_sessions_bp.route("/sessions/<int:id>", methods=["GET"])
+@movie_sessions_bp.route("/sessions/<int:id_>", methods=["GET"])
 def get_movie_session(id_):
     """
     Get movie session info by id
@@ -104,7 +104,7 @@ def create_movie_session():
     return jsonify({"id": movie_session.id}), 201
 
 
-@movie_sessions_bp.route("/sessions/<int:id>", methods=["PATCH"])
+@movie_sessions_bp.route("/sessions/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_movie_session(id_):
@@ -148,7 +148,7 @@ def update_movie_session(id_):
     return jsonify({"message": "Updated"})
 
 
-@movie_sessions_bp.route("/sessions/<int:id>", methods=["DELETE"])
+@movie_sessions_bp.route("/sessions/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_movie_session(id_):
