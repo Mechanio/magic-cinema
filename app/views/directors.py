@@ -28,14 +28,14 @@ def get_directors():
 
 
 @directors_bp.route("/director/<int:id>", methods=["GET"])
-def get_director(id):
+def get_director(id_):
     """
     Get director info by id
 
-    :param id: id of director
+    :param id_: id of director
     :return: json with director info
     """
-    director = DirectorsModel.find_by_id(id, without_sessions=True)
+    director = DirectorsModel.find_by_id(id_, without_sessions=True)
     if not director:
         return jsonify({"message": "Director not found."}), 404
 
@@ -67,17 +67,17 @@ def create_director():
 @directors_bp.route("/director/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_director(id):
+def update_director(id_):
     """
     Update director info by id as admin
 
-    :param id: id of director
+    :param id_: id of director
     :return: json with message "Updated"
     """
     firstname = request.json.get("firstname")
     lastname = request.json.get("lastname")
 
-    director = DirectorsModel.find_by_id(id, to_dict=False)
+    director = DirectorsModel.find_by_id(id_, to_dict=False)
     if not director:
         return jsonify({"message": "Director not found."}), 404
 
@@ -92,14 +92,14 @@ def update_director(id):
 @directors_bp.route("/director/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
-def delete_director(id):
+def delete_director(id_):
     """
     Delete director by id as admin
 
-    :param id: id of director
+    :param id_: id of director
     :return: json with message "Deleted"
     """
-    director = DirectorsModel.delete_by_id(id)
+    director = DirectorsModel.delete_by_id(id_)
     if director == 404:
         return jsonify({"message": "Director not found."}), 404
     return jsonify({"message": "Deleted"}), 200

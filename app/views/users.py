@@ -49,14 +49,14 @@ def get_inactive_users():
 @users_bp.route("/users/<int:id>", methods=["GET"])
 @jwt_required()
 @admin_group_required
-def get_user(id):
+def get_user(id_):
     """
     Get user info by id as admin
 
-    :param id: id of user
+    :param id_: id of user
     :return: json with user info
     """
-    user = UserModel.find_by_id(id)
+    user = UserModel.find_by_id(id_)
     if not user:
         return jsonify({"message": "User not found."}), 404
 
@@ -95,14 +95,14 @@ def create_user():
 
 @users_bp.route("/users/<int:id>", methods=["PATCH"])
 @jwt_required()
-def update_user(id):
+def update_user(id_):
     """
     Update user info by id as admin or only password as user
 
-    :param id: id of user
+    :param id_: id of user
     :return: json with message "Updated"
     """
-    user = UserModel.find_by_id(id, to_dict=False)
+    user = UserModel.find_by_id(id_, to_dict=False)
     if not user:
         return jsonify({"message": "User not found."}), 404
     email = get_jwt().get("sub")
@@ -150,14 +150,14 @@ def update_user(id):
 
 @users_bp.route("/users/<int:id>", methods=["DELETE"])
 @jwt_required()
-def delete_user(id):
+def delete_user(id_):
     """
     Delete user by id
 
-    :param id: id of user
+    :param id_: id of user
     :return: json with message "Deleted"
     """
-    user = UserModel.find_by_id(id)
+    user = UserModel.find_by_id(id_)
     if not user:
         return jsonify({"message": "User not found."}), 404
     email = get_jwt().get("sub")

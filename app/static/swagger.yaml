@@ -1027,7 +1027,7 @@ paths:
         - bearerAuth: []
       tags:
         - "Movie sessions"
-      summary: "Update movie sessions's information"
+      summary: "Update movie session's information"
       description: "This can only be done by the logged in admin"
       parameters:
         - name: "id"

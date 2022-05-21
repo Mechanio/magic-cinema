@@ -28,14 +28,14 @@ def get_actors():
 
 
 @actors_bp.route("/actors/<int:id>", methods=["GET"])
-def get_actor(id):
+def get_actor(id_):
     """
     Get actor info by id
 
-    :param id: id of actor
+    :param id_: id of actor
     :return: json with actor info
     """
-    actor = ActorsModel.find_by_id(id, without_sessions=True)
+    actor = ActorsModel.find_by_id(id_, without_sessions=True)
     if not actor:
         return jsonify({"message": "Actor not found."}), 404
 
@@ -67,17 +67,17 @@ def create_actor():
 @actors_bp.route("/actors/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_actor(id):
+def update_actor(id_):
     """
     Update actor info by id as admin
 
-    :param id: id of actor
+    :param id_: id of actor
     :return: json with message "Updated"
     """
     firstname = request.json.get("firstname")
     lastname = request.json.get("lastname")
 
-    actor = ActorsModel.find_by_id(id, to_dict=False)
+    actor = ActorsModel.find_by_id(id_, to_dict=False)
     if not actor:
         return jsonify({"message": "Actor not found."}), 404
 
@@ -92,14 +92,14 @@ def update_actor(id):
 @actors_bp.route("/actors/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
-def delete_actor(id):
+def delete_actor(id_):
     """
     Delete actor by id as admin
 
-    :param id: id of actor
+    :param id_: id of actor
     :return: json with message "Deleted"
     """
-    actor = ActorsModel.delete_by_id(id)
+    actor = ActorsModel.delete_by_id(id_)
     if actor == 404:
         return jsonify({"message": "Actor not found."}), 404
     return jsonify({"message": "Deleted"})

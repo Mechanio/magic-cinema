@@ -55,14 +55,14 @@ def get_inactive_movies_sessions():
 
 
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["GET"])
-def get_movie_session(id):
+def get_movie_session(id_):
     """
     Get movie session info by id
 
-    :param id: id of movie session
+    :param id_: id of movie session
     :return: json with movie session info
     """
-    movie_session = MovieSessionsModel.find_by_id(id)
+    movie_session = MovieSessionsModel.find_by_id(id_)
     if not movie_session:
         return jsonify({"message": "Movie session not found."}), 404
 
@@ -107,11 +107,11 @@ def create_movie_session():
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_movie_session(id):
+def update_movie_session(id_):
     """
     Update movie session info by id as admin
 
-    :param id: id of movie session
+    :param id_: id of movie session
     :return: json with message "Updated"
     """
     movie_id = request.json.get("movie_id")
@@ -123,7 +123,7 @@ def update_movie_session(id):
     minute = request.json.get("minute")
     is_active = request.json.get("is_active")
 
-    movie_session = MovieSessionsModel.find_by_id(id, to_dict=False)
+    movie_session = MovieSessionsModel.find_by_id(id_, to_dict=False)
     if not movie_session:
         return jsonify({"message": "Movie session not found."}), 404
 
@@ -151,14 +151,14 @@ def update_movie_session(id):
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
-def delete_movie_session(id):
+def delete_movie_session(id_):
     """
     Delete movie session by id as admin
 
-    :param id: id of movie session
+    :param id_: id of movie session
     :return: json with message "Deleted"
     """
-    movie_session = MovieSessionsModel.delete_by_id(id)
+    movie_session = MovieSessionsModel.delete_by_id(id_)
     if movie_session == 404:
         return jsonify({"message": "Movie session not found."}), 404
     return jsonify({"message": "Deleted"})

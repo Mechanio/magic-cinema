@@ -69,16 +69,16 @@ def get_inactive_tickets():
 
 @tickets_bp.route("/tickets/<int:id>", methods=["GET"])
 @jwt_required()
-def get_ticket(id):
+def get_ticket(id_):
     """
     Get ticket info by id
 
-    :param id: id of ticket
+    :param id_: id of ticket
     :return: json with ticket info
     """
     email = get_jwt().get("sub")
     current_user = UserModel.find_by_email(email, to_dict=False)
-    ticket = TicketsModel.find_by_id(id)
+    ticket = TicketsModel.find_by_id(id_)
     if not ticket:
         return jsonify({"message": "Ticket not found."}), 404
 
@@ -139,18 +139,18 @@ def create_ticket():
 @tickets_bp.route("/tickets/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_ticket(id):
+def update_ticket(id_):
     """
     Update ticket info by id as admin
 
-    :param id: id of ticket
+    :param id_: id of ticket
     :return: json with message "Updated"
     """
     session_id = request.json.get("session_id")
     user_id = request.json.get("user_id")
     is_active = request.json.get("is_active")
 
-    ticket = TicketsModel.find_by_id(id, to_dict=False)
+    ticket = TicketsModel.find_by_id(id_, to_dict=False)
     if not ticket:
         return jsonify({"message": "Ticket not found."}), 404
 
@@ -176,14 +176,14 @@ def update_ticket(id):
 
 @tickets_bp.route("/tickets/<int:id>", methods=["DELETE"])
 @jwt_required()
-def delete_ticket(id):
+def delete_ticket(id_):
     """
     Delete ticket by id as user
 
-    :param id: id of ticket
+    :param id_: id of ticket
     :return: json with message "Deleted"
     """
-    ticket = TicketsModel.find_by_id(id, to_dict=False)
+    ticket = TicketsModel.find_by_id(id_, to_dict=False)
     if not ticket:
         return jsonify({"message": "Ticket not found."}), 404
     email = get_jwt().get("sub")

@@ -23,14 +23,14 @@ def get_auditoriums():
 
 
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["GET"])
-def get_auditorium(id):
+def get_auditorium(id_):
     """
     Get auditorium info by id
 
-    :param id: id of auditorium
+    :param id_: id of auditorium
     :return: json with auditorium info
     """
-    auditorium = AuditoriumModel.find_by_id(id)
+    auditorium = AuditoriumModel.find_by_id(id_)
     if not auditorium:
         return jsonify({"message": "Auditorium not found."}), 404
 
@@ -59,16 +59,16 @@ def create_auditorium():
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_auditorium(id):
+def update_auditorium(id_):
     """
     Update auditorium info by id as admin
 
-    :param id: id of auditorium
+    :param id_: id of auditorium
     :return: json with message "Updated"
     """
     seats = request.json.get("seats")
 
-    auditorium = AuditoriumModel.find_by_id(id, to_dict=False)
+    auditorium = AuditoriumModel.find_by_id(id_, to_dict=False)
     if not auditorium:
         return jsonify({"message": "Auditorium not found."}), 404
 
@@ -82,14 +82,14 @@ def update_auditorium(id):
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
-def delete_auditorium(id):
+def delete_auditorium(id_):
     """
     Delete auditorium by id as admin
 
-    :param id: id of auditorium
+    :param id_: id of auditorium
     :return: json with message "Deleted"
     """
-    auditorium = AuditoriumModel.delete_by_id(id)
+    auditorium = AuditoriumModel.delete_by_id(id_)
     if auditorium == 404:
         return jsonify({"message": "Auditorium not found."}), 404
     return jsonify({"message": "Deleted"})

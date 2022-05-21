@@ -27,14 +27,14 @@ def get_genres():
 
 
 @genres_bp.route("/genres/<int:id>", methods=["GET"])
-def get_genre(id):
+def get_genre(id_):
     """
     Get genre info by id
 
-    :param id: id of genre
+    :param id_: id of genre
     :return: json with genre info
     """
-    genre = GenresModel.find_by_id(id, without_sessions=True)
+    genre = GenresModel.find_by_id(id_, without_sessions=True)
     if not genre:
         return jsonify({"message": "Genre not found."}), 404
 
@@ -61,16 +61,16 @@ def create_genre():
 @genres_bp.route("/genres/<int:id>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
-def update_genre(id):
+def update_genre(id_):
     """
     Update genre info by id as admin
 
-    :param id: id of genre
+    :param id_: id of genre
     :return: json with message "Updated"
     """
     new_genre = request.json.get("genre")
 
-    genre = GenresModel.find_by_id(id, to_dict=False)
+    genre = GenresModel.find_by_id(id_, to_dict=False)
     if not genre:
         return jsonify({"message": "Genre not found."}), 404
 
@@ -84,14 +84,14 @@ def update_genre(id):
 @genres_bp.route("/genres/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
-def delete_genre(id):
+def delete_genre(id_):
     """
     Delete genre by id as admin
 
-    :param id: id of genre
+    :param id_: id of genre
     :return: json with message "Deleted"
     """
-    genre = GenresModel.delete_by_id(id)
+    genre = GenresModel.delete_by_id(id_)
     if genre == 404:
         return jsonify({"message": "Genre not found."}), 404
     return jsonify({"message": "Deleted"})

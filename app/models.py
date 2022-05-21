@@ -23,18 +23,18 @@ class MoviesModel(base):
                             foreign_keys="MovieSessionsModel.movie_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_sessions=False):
+    def find_by_id(cls, id_, to_dict=True, without_sessions=False):
         """
         Find movie by id
 
-        :param id: movie id
+        :param id_: movie id
         :param to_dict: if True - returns dict representation of movie info, if False -
             returns model instance
         :param without_sessions: if True - returns dict representation of movie info without
             sessions, if False - with
         :return: dict representation of movie info or model instance
         """
-        movie = session.query(cls).filter_by(id=id).first()
+        movie = session.query(cls).filter_by(id=id_).first()
         if not movie:
             return {}
         if to_dict:
@@ -87,14 +87,14 @@ class MoviesModel(base):
         return [cls.to_dict(movie) for movie in movies]
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete movie by id
 
-        :param id: movie id
+        :param id_: movie id
         :return: code status (200, 404)
         """
-        movie = session.query(cls).filter_by(id=id).first()
+        movie = session.query(cls).filter_by(id=id_).first()
         if movie:
             session.delete(movie)
             session.commit()
@@ -129,18 +129,19 @@ class MoviesModel(base):
                 "release_date": movie.release_date,
                 "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
                 "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
-                "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres]
+                "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres],
             }
         else:
             return {
-               "id": movie.id,
-               "name": movie.name,
-               "description": movie.description,
-               "release_date": movie.release_date,
-               "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
-               "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
-               "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres],
-               "sessions": [MovieSessionsModel.to_dict(movie_session, without_tickets=True) for movie_session in movie.sessions]
+                "id": movie.id,
+                "name": movie.name,
+                "description": movie.description,
+                "release_date": movie.release_date,
+                "director": DirectorsModel.find_by_id(movie.director_id, without_movies=True),
+                "actors": [ActorsModel.find_by_id(actor.actor_id, without_movies=True) for actor in movie.actors],
+                "genres": [GenresModel.find_by_id(genre.genre_id, without_movies=True) for genre in movie.genres],
+                "sessions": [MovieSessionsModel.to_dict(movie_session, without_tickets=True) for movie_session
+                             in movie.sessions],
             }
 
 
@@ -153,11 +154,11 @@ class DirectorsModel(base):
                           foreign_keys="MoviesModel.director_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
+    def find_by_id(cls, id_, to_dict=True, without_movies=False, without_sessions=False):
         """
         Find director by id
 
-        :param id: director id
+        :param id_: director id
         :param to_dict: if True - returns dict representation of director info, if False -
             returns model instance
         :param without_movies: if True - returns dict representation of movie info without
@@ -166,7 +167,7 @@ class DirectorsModel(base):
             sessions, if False - with
         :return: dict representation of director info or model instance
         """
-        director = session.query(cls).filter_by(id=id).first()
+        director = session.query(cls).filter_by(id=id_).first()
         if not director:
             return {}
         if to_dict:
@@ -211,14 +212,14 @@ class DirectorsModel(base):
         return [cls.to_dict(director, without_sessions=without_sessions) for director in directors]
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete director by id
 
-        :param id: director id
+        :param id_: director id
         :return: code status (200, 404)
         """
-        director = session.query(cls).filter_by(id=id).first()
+        director = session.query(cls).filter_by(id=id_).first()
         if director:
             session.delete(director)
             session.commit()
@@ -258,7 +259,7 @@ class DirectorsModel(base):
                 "id": director.id,
                 "firstname": director.firstname,
                 "lastname": director.lastname,
-                "movies": [MoviesModel.to_dict(movie, without_sessions) for movie in director.movies]
+                "movies": [MoviesModel.to_dict(movie, without_sessions) for movie in director.movies],
             }
 
 
@@ -271,11 +272,11 @@ class ActorsModel(base):
                           foreign_keys="CastModel.actor_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
+    def find_by_id(cls, id_, to_dict=True, without_movies=False, without_sessions=False):
         """
         Find actor by id
 
-        :param id: actor id
+        :param id_: actor id
         :param to_dict: if True - returns dict representation of actor info, if False -
             returns model instance
         :param without_movies: if True - returns dict representation of actor info without
@@ -284,7 +285,7 @@ class ActorsModel(base):
             sessions, if False - with
         :return: dict representation of actor info or model instance
         """
-        actor = session.query(cls).filter_by(id=id).first()
+        actor = session.query(cls).filter_by(id=id_).first()
         if not actor:
             return {}
         if to_dict:
@@ -338,14 +339,14 @@ class ActorsModel(base):
         session.commit()
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete actor by id
 
-        :param id: actor id
+        :param id_: actor id
         :return: code status (200, 404)
         """
-        actor = session.query(cls).filter_by(id=id).first()
+        actor = session.query(cls).filter_by(id=id_).first()
         if actor:
             session.delete(actor)
             session.commit()
@@ -376,7 +377,8 @@ class ActorsModel(base):
                 "id": actor.id,
                 "firstname": actor.firstname,
                 "lastname": actor.lastname,
-                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie in actor.movies]
+                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie
+                           in actor.movies],
             }
 
 
@@ -436,11 +438,11 @@ class GenresModel(base):
                           foreign_keys="MovieGenreModel.genre_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_movies=False, without_sessions=False):
+    def find_by_id(cls, id_, to_dict=True, without_movies=False, without_sessions=False):
         """
         Find genre by id
 
-        :param id: genre id
+        :param id_: genre id
         :param to_dict: if True - returns dict representation of genre info, if False -
             returns model instance
         :param without_movies: if True - returns dict representation of genre info without
@@ -449,7 +451,7 @@ class GenresModel(base):
             sessions, if False - with
         :return: dict representation of genre info or model instance
         """
-        genre = session.query(cls).filter_by(id=id).first()
+        genre = session.query(cls).filter_by(id=id_).first()
         if not genre:
             return {}
         if to_dict:
@@ -501,14 +503,14 @@ class GenresModel(base):
         session.commit()
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete genre by id
 
-        :param id: genre id
+        :param id_: genre id
         :return: code status (200, 404)
         """
-        genre = session.query(cls).filter_by(id=id).first()
+        genre = session.query(cls).filter_by(id=id_).first()
         if genre:
             session.delete(genre)
             session.commit()
@@ -531,13 +533,14 @@ class GenresModel(base):
         if without_movies:
             return {
                 "id": genre.id,
-                "genre": genre.genre
+                "genre": genre.genre,
             }
         else:
             return {
                 "id": genre.id,
                 "genre": genre.genre,
-                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie in genre.movies]
+                "movies": [MoviesModel.find_by_id(movie.movie_id, without_sessions=without_sessions) for movie
+                           in genre.movies],
             }
 
 
@@ -597,18 +600,18 @@ class AuditoriumModel(base):
                                   foreign_keys="MovieSessionsModel.auditorium_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True, without_sessions=False):
+    def find_by_id(cls, id_, to_dict=True, without_sessions=False):
         """
         Find auditorium by id
 
-        :param id: auditorium id
+        :param id_: auditorium id
         :param to_dict: if True - returns dict representation of auditorium info, if False -
             returns model instance
         :param without_sessions: if True - returns dict representation of auditorium info without
             sessions, if False - with
         :return: dict representation of auditorium info or model instance
         """
-        audit = session.query(cls).filter_by(id=id).first()
+        audit = session.query(cls).filter_by(id=id_).first()
         if not audit:
             return {}
         if to_dict:
@@ -638,14 +641,14 @@ class AuditoriumModel(base):
         session.commit()
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete auditorium by id
 
-        :param id: auditorium id
+        :param id_: auditorium id
         :return: code status (200, 404)
         """
-        audit = session.query(cls).filter_by(id=id).first()
+        audit = session.query(cls).filter_by(id=id_).first()
         if audit:
             session.delete(audit)
             session.commit()
@@ -666,13 +669,13 @@ class AuditoriumModel(base):
         if without_sessions:
             return {
                 "id": audit.id,
-                "seats": audit.seats
+                "seats": audit.seats,
             }
         else:
             return {
                 "id": audit.id,
                 "seats": audit.seats,
-                "movie_sessions": [MovieSessionsModel.to_dict(movie_session) for movie_session in audit.movie_sessions]
+                "movie_sessions": [MovieSessionsModel.to_dict(movie_session) for movie_session in audit.movie_sessions],
             }
 
 
@@ -690,16 +693,16 @@ class MovieSessionsModel(base):
     is_active = Column(Boolean(), nullable=False)
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True):
+    def find_by_id(cls, id_, to_dict=True):
         """
         Find movie session by id
 
-        :param id: movie session id
+        :param id_: movie session id
         :param to_dict: if True - returns dict representation of movie session info, if False -
             returns model instance
         :return: dict representation of movie session info or model instance
         """
-        movie_session = session.query(cls).filter_by(id=id).first()
+        movie_session = session.query(cls).filter_by(id=id_).first()
         if not movie_session:
             return {}
         if to_dict:
@@ -778,14 +781,14 @@ class MovieSessionsModel(base):
         return [cls.to_dict(movie_session) for movie_session in movie_sessions if not movie_session.is_active]
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete movie session by id and all tickets
 
-        :param id: movie session  id
+        :param id_: movie session  id
         :return: code status (200, 404)
         """
-        movie_session = session.query(cls).filter_by(id=id).first()
+        movie_session = session.query(cls).filter_by(id=id_).first()
         if movie_session:
             movie_session.is_active = False
             movie_session.save_to_db()
@@ -833,7 +836,7 @@ class MovieSessionsModel(base):
                 "remain_seats": movie_session.remain_seats,
                 "is_active": movie_session.is_active,
                 "auditorium": AuditoriumModel.find_by_id(movie_session.auditorium_id, without_sessions=True),
-                "tickets": [TicketsModel.to_dict(ticket) for ticket in movie_session.tickets]
+                "tickets": [TicketsModel.to_dict(ticket) for ticket in movie_session.tickets],
             }
 
 
@@ -850,16 +853,16 @@ class UserModel(base):
                            foreign_keys="TicketsModel.user_id")
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True):
+    def find_by_id(cls, id_, to_dict=True):
         """
         Find active user by id
 
-        :param id: user id
+        :param id_: user id
         :param to_dict: if True - returns dict representation of user info, if False -
             returns model instance
         :return: dict representation of user info or model instance
         """
-        user = session.query(cls).filter_by(id=id).first()
+        user = session.query(cls).filter_by(id=id_).first()
         if not user:
             return {}
         if user.is_active:
@@ -939,14 +942,14 @@ class UserModel(base):
         return [cls.to_dict(user) for user in users if not user.is_active]
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete user by id
 
-        :param id: user id
+        :param id_: user id
         :return: code status (200, 404)
         """
-        user = session.query(cls).filter_by(id=id).first()
+        user = session.query(cls).filter_by(id=id_).first()
         if user:
             user.is_active = False
             user.save_to_db()
@@ -978,7 +981,7 @@ class UserModel(base):
             "email": user.email,
             "is_admin": user.is_admin,
             "is_active": user.is_active,
-            "tickets": [TicketsModel.to_dict(ticket) for ticket in user.tickets]
+            "tickets": [TicketsModel.to_dict(ticket) for ticket in user.tickets],
         }
 
     @staticmethod
@@ -1013,16 +1016,16 @@ class TicketsModel(base):
     is_active = Column(Boolean(), default=False)
 
     @classmethod
-    def find_by_id(cls, id, to_dict=True):
+    def find_by_id(cls, id_, to_dict=True):
         """
         Find active ticket by id
 
-        :param id: ticket id
+        :param id_: ticket id
         :param to_dict: if True - returns dict representation of ticket info, if False -
             returns model instance
         :return: dict representation of ticket info or model instance
         """
-        ticket = session.query(cls).filter_by(id=id).first()
+        ticket = session.query(cls).filter_by(id=id_).first()
         if not ticket:
             return {}
         if ticket.is_active:
@@ -1114,14 +1117,14 @@ class TicketsModel(base):
         return [cls.to_dict(ticket) for ticket in tickets if not ticket.is_active]
 
     @classmethod
-    def delete_by_id(cls, id):
+    def delete_by_id(cls, id_):
         """
         Delete ticket by id
 
-        :param id: ticket id
+        :param id_: ticket id
         :return: code status (200, 404)
         """
-        ticket = session.query(cls).filter_by(id=id).first()
+        ticket = session.query(cls).filter_by(id=id_).first()
         if ticket:
             ticket.is_active = False
             ticket.save_to_db()

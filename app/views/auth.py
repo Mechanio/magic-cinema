@@ -48,12 +48,12 @@ def register():
         return {
             "id": user.id,
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
         }, 201
     except Exception as e:
         return {
             "message": "Something went wrong while creating",
-            "error": repr(e)
+            "error": repr(e),
         }, 500
 
 
@@ -80,7 +80,7 @@ def login():
         return {
             "message": f"Logged in as {current_user.firstname + ' ' + current_user.lastname}, ({current_user.email})",
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
         }, 201
     else:
         return {"message": "Wrong password"}, 404
@@ -120,7 +120,7 @@ def logout_access():
     except Exception as e:
         return {
             "message": "Something went wrong while revoking token",
-            "error": repr(e)
+            "error": repr(e),
         }, 500
 
 
@@ -140,5 +140,5 @@ def logout_refresh():
     except Exception as e:
         return {
                    "message": "Something went wrong while revoking token",
-                   "error": repr(e)
+                   "error": repr(e),
                }, 500
