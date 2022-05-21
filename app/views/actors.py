@@ -11,6 +11,11 @@ actors_bp = Blueprint('actors', __name__)
 
 @actors_bp.route("/actors/", methods=["GET"])
 def get_actors():
+    """
+    Get all actors or by name
+
+    :return: json with actors info
+    """
     firstname = request.args.get("firstname")
     lastname = request.args.get("lastname")
     offset = request.args.get("offset", OFFSET_DEFAULT)
@@ -24,6 +29,12 @@ def get_actors():
 
 @actors_bp.route("/actors/<int:id>", methods=["GET"])
 def get_actor(id):
+    """
+    Get actor info by id
+
+    :param id: id of actor
+    :return: json with actor info
+    """
     actor = ActorsModel.find_by_id(id, without_sessions=True)
     if not actor:
         return jsonify({"message": "Actor not found."}), 404
@@ -35,6 +46,11 @@ def get_actor(id):
 @jwt_required()
 @admin_group_required
 def create_actor():
+    """
+    Create actor as admin
+
+    :return: json with new actor id
+    """
     if not request.json:
         return jsonify({"message": 'Please, specify "firstname", and "lastname".'}), 400
 
@@ -52,6 +68,12 @@ def create_actor():
 @jwt_required()
 @admin_group_required
 def update_actor(id):
+    """
+    Update actor info by id as admin
+
+    :param id: id of actor
+    :return: json with message "Updated"
+    """
     firstname = request.json.get("firstname")
     lastname = request.json.get("lastname")
 
@@ -64,13 +86,19 @@ def update_actor(id):
     if lastname:
         actor.lastname = lastname
     actor.save_to_db()
-    return jsonify({"message": "Updated"})
+    return jsonify({"message": "Updated"}), 200
 
 
 @actors_bp.route("/actors/<int:id>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_actor(id):
+    """
+    Delete actor by id as admin
+
+    :param id: id of actor
+    :return: json with message "Deleted"
+    """
     actor = ActorsModel.delete_by_id(id)
     if actor == 404:
         return jsonify({"message": "Actor not found."}), 404

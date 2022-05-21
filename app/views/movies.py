@@ -12,6 +12,11 @@ movies_bp = Blueprint('movies', __name__)
 
 @movies_bp.route("/movies/", methods=["GET"])
 def get_movies():
+    """
+    Get all movies or by name or director id
+
+    :return: json with movies info
+    """
     name = request.args.get("name")
     director_id = request.args.get("director_id")
     offset = request.args.get("offset", OFFSET_DEFAULT)
@@ -29,6 +34,12 @@ def get_movies():
 
 @movies_bp.route("/movies/<int:id>", methods=["GET"])
 def get_movie(id):
+    """
+    Get movie info by id
+
+    :param id: id of movie
+    :return: json with movie info
+    """
     movie = MoviesModel.find_by_id(id)
     if not movie:
         return jsonify({"message": "Movie not found."}), 404
@@ -40,6 +51,11 @@ def get_movie(id):
 @jwt_required()
 @admin_group_required
 def create_movie():
+    """
+    Create movie as admin
+
+    :return: json with new movie id
+    """
     if not request.json:
         return jsonify({"message": 'Please, specify "name", "description", "release_date(year, month, day)", '
                                    '"director_id", "genres"(list) and "actors"(list).'}), 400
@@ -79,6 +95,12 @@ def create_movie():
 @jwt_required()
 @admin_group_required
 def update_movie(id):
+    """
+    Update movie info by id as admin
+
+    :param id: id of movie
+    :return: json with message "Updated"
+    """
     name = request.json.get("name")
     description = request.json.get("description")
     year = request.json.get("year")
@@ -132,7 +154,12 @@ def update_movie(id):
 @jwt_required()
 @admin_group_required
 def delete_genre_or_cast(id):
+    """
+    Delete movie's genres or actors by their names as admin
 
+    :param id: id of movie
+    :return: json with message "Updated"
+    """
     movie = MoviesModel.find_by_id(id, to_dict=False)
     if not movie:
         return jsonify({"message": "Movie not found."}), 404
@@ -166,6 +193,12 @@ def delete_genre_or_cast(id):
 @jwt_required()
 @admin_group_required
 def delete_movie(id):
+    """
+    Delete movie by id as admin
+
+    :param id: id of movie
+    :return: json with message "Deleted"
+    """
     movie = MoviesModel.delete_by_id(id)
     if movie == 404:
         return jsonify({"message": "Movie not found."}), 404

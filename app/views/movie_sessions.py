@@ -12,6 +12,11 @@ movie_sessions_bp = Blueprint('sessions', __name__)
 
 @movie_sessions_bp.route("/sessions/", methods=["GET"])
 def get_movie_sessions():
+    """
+    Get all movies sessions or by movie or auditorium ids
+
+    :return: json with sessions info
+    """
     movie_id = request.args.get("movie_id")
     auditorium_id = request.args.get("auditorium_id")
     offset = request.args.get("offset", OFFSET_DEFAULT)
@@ -34,8 +39,29 @@ def get_movie_sessions():
     return jsonify(movie_sessions)
 
 
+@movie_sessions_bp.route("/sessions/inactive", methods=["GET"])
+@jwt_required()
+@admin_group_required
+def get_inactive_movies_sessions():
+    """
+    Get all inactive movies sessions
+
+    :return: json with sessions info
+    """
+    offset = request.args.get("offset", OFFSET_DEFAULT)
+    limit = request.args.get("limit", LIMIT_DEFAULT)
+    user = MovieSessionsModel.return_all_inactive(offset, limit)
+    return jsonify(user)
+
+
 @movie_sessions_bp.route("/sessions/<int:id>", methods=["GET"])
 def get_movie_session(id):
+    """
+    Get movie session info by id
+
+    :param id: id of movie session
+    :return: json with movie session info
+    """
     movie_session = MovieSessionsModel.find_by_id(id)
     if not movie_session:
         return jsonify({"message": "Movie session not found."}), 404
@@ -47,6 +73,11 @@ def get_movie_session(id):
 @jwt_required()
 @admin_group_required
 def create_movie_session():
+    """
+    Create movie session as admin
+
+    :return: json with new movie session id
+    """
     if not request.json:
         return jsonify({"message": 'Please, specify movie_id, auditorium_id, '
                                    'year, month, day, hour and minute.'}), 400
@@ -77,6 +108,12 @@ def create_movie_session():
 @jwt_required()
 @admin_group_required
 def update_movie_session(id):
+    """
+    Update movie session info by id as admin
+
+    :param id: id of movie session
+    :return: json with message "Updated"
+    """
     movie_id = request.json.get("movie_id")
     auditorium_id = request.json.get("auditorium_id")
     year = request.json.get("year")
@@ -115,6 +152,12 @@ def update_movie_session(id):
 @jwt_required()
 @admin_group_required
 def delete_movie_session(id):
+    """
+    Delete movie session by id as admin
+
+    :param id: id of movie session
+    :return: json with message "Deleted"
+    """
     movie_session = MovieSessionsModel.delete_by_id(id)
     if movie_session == 404:
         return jsonify({"message": "Movie session not found."}), 404

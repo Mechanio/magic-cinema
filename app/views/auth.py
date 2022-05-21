@@ -18,8 +18,10 @@ def get_groups(user):
 
 @auth_bp.route("/auth/registration", methods=["POST"])
 def register():
-    """Method for adding a new user (registration).
-       Returns access and refresh tokens.
+    """
+    Method for adding a new user (registration)
+
+    :return: access and refresh tokens
     """
     if not request.json:
         return jsonify({"message": 'Please, specify "firstname", "lastname", "email", "password" and "is_admin".'}), 400
@@ -34,7 +36,7 @@ def register():
         return jsonify({"message": 'Please, specify "firstname", "lastname", "email", "password" and "is_admin".'}), 400
 
     if UserModel.find_by_email(email, to_dict=False):
-        return {"message": f"Email {email} already used"}, 401
+        return {"message": f"Email {email} already used"}, 404
 
     user = UserModel(firstname=firstname, lastname=lastname, email=email,
                      hashed_password=UserModel.generate_hash(password), is_admin=is_admin, is_active=True)
@@ -57,7 +59,11 @@ def register():
 
 @auth_bp.route("/auth/login", methods=["POST"])
 def login():
-    """Method for logination. Returns access and refresh tokens."""
+    """
+    Method for logination
+
+    :return: access and refresh tokens
+    """
     if not request.json or not request.json.get("email") or not request.json.get("password"):
         return jsonify({"message": 'Please, provide "email" and "password" in body'}), 400
 
@@ -65,7 +71,7 @@ def login():
     password = request.json["password"]
     current_user = UserModel.find_by_email(email, to_dict=False)
     if not current_user:
-        return {"message": f"User with email {email} doesn't exist"}, 401
+        return {"message": f"User with email {email} doesn't exist"}, 404
 
     groups = get_groups(current_user)
     if UserModel.verify_hash(password, current_user.hashed_password):
@@ -75,20 +81,24 @@ def login():
             "message": f"Logged in as {current_user.firstname + ' ' + current_user.lastname}, ({current_user.email})",
             'access_token': access_token,
             'refresh_token': refresh_token
-        }
+        }, 201
     else:
-        return {"message": "Wrong password"}, 401
+        return {"message": "Wrong password"}, 404
 
 
 @auth_bp.route("/auth/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def post():
-    """Method for refreshing access token. Returns new access token."""
+    """
+    Refreshing access token
+
+    :return: new access token
+    """
     current_user_identity = get_jwt_identity()
     email = get_jwt().get("sub")
     current_user = UserModel.find_by_email(email, to_dict=False)
     if not current_user:
-        return {"message": f"User with email {email} doesn't exist"}, 401
+        return {"message": f"User with email {email} doesn't exist"}, 404
     groups = get_groups(current_user)
     access_token = create_access_token(identity=current_user_identity, additional_claims=groups)
     return {'access_token': access_token}, 201
@@ -97,11 +107,16 @@ def post():
 @auth_bp.route("/auth/logout-access", methods=["POST"])
 @jwt_required()
 def logout_access():
+    """
+    Revoke access token
+
+    :return: message 'Access token has been revoked'
+    """
     jti = get_jwt()['jti']
     try:
         revoked_token = RevokedTokenModel(jti=jti)
         revoked_token.add()
-        return {'message': 'Access token has been revoked'}, 201
+        return {'message': 'Access token has been revoked'}, 200
     except Exception as e:
         return {
             "message": "Something went wrong while revoking token",
@@ -112,11 +127,16 @@ def logout_access():
 @auth_bp.route("/auth/logout-refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def logout_refresh():
+    """
+    Revoke refresh token
+
+    :return: message 'Refresh token has been revoked'
+    """
     jti = get_jwt()['jti']
     try:
         revoked_token = RevokedTokenModel(jti=jti)
         revoked_token.add()
-        return {"message": "Refresh token has been revoked"}
+        return {"message": "Refresh token has been revoked"}, 200
     except Exception as e:
         return {
                    "message": "Something went wrong while revoking token",

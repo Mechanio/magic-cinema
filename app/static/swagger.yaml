@@ -88,7 +88,18 @@ paths:
             application/json:
               example:
                 message: "Please, specify 'firstname' and 'lastname'"
-
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /actors/{id}:
     get:
       tags:
@@ -141,6 +152,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong actor's id"
           content:
@@ -168,6 +191,18 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong actor's id"
           content:
@@ -211,7 +246,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActorIn'
+              $ref: '#/components/schemas/AuditoriumIn'
       responses:
         '201':
           description: "Successful Operation"
@@ -225,7 +260,18 @@ paths:
             application/json:
               example:
                 message: "Please, specify 'seats'"
-
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /auditorium/{id}:
     get:
       tags:
@@ -278,6 +324,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong auditorium's id"
           content:
@@ -305,6 +363,18 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong auditorium's id"
           content:
@@ -337,7 +407,7 @@ paths:
             application/json:
               example:
                 message: "Please, specify 'firstname', 'lastname', 'email', 'password' and 'is_admin'"
-        '401':
+        '404':
           description: "Wrong input email"
           content:
             application/json:
@@ -376,7 +446,7 @@ paths:
             application/json:
               example:
                 message: "Please, provide 'email' and 'password' in body"
-        '401':
+        '404':
           description: "Wrong input email or password"
           content:
             application/json:
@@ -398,6 +468,12 @@ paths:
               example:
                 access_token: "{access_token}"
         '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '404':
           description: "Wrong input email"
           content:
             application/json:
@@ -418,12 +494,18 @@ paths:
       summary: "Revoke access token"
       description: "This can only be done by the logged in user"
       responses:
-        '201':
+        '200':
           description: "Successful Operation"
           content:
             application/json:
               example:
                 message: "Access token has been revoked"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
         '500':
           description: "Error occurred"
           content:
@@ -440,12 +522,18 @@ paths:
       summary: "Revoke refresh token"
       description: "This can only be done by the logged in user with refresh token"
       responses:
-        '201':
+        '200':
           description: "Successful Operation"
           content:
             application/json:
               example:
                 message: "Refresh token has been revoked"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
         '500':
           description: "Error occurred"
           content:
@@ -516,6 +604,18 @@ paths:
             application/json:
               example:
                 message: "Please, specify 'firstname' and 'lastname'"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /director/{id}:
     get:
       tags:
@@ -569,6 +669,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong director's id"
           content:
@@ -596,6 +708,18 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong director's id"
           content:
@@ -653,7 +777,19 @@ paths:
             application/json:
               example:
                 id: "5"
-        '400':
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
+        '404':
           description: "Wrong input data"
           content:
             application/json:
@@ -678,6 +814,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenreOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Genre not found"
           content:
@@ -711,6 +859,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong genre's id"
           content:
@@ -738,6 +898,18 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong genre's id"
           content:
@@ -813,6 +985,18 @@ paths:
             application/json:
               example:
                 message: "Please, specify movie_id, auditorium_id, year, month, day, hour and minute"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /sessions/{id}:
     get:
       tags:
@@ -865,6 +1049,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong movie session's id"
           content:
@@ -892,12 +1088,64 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong movie session's id"
           content:
             application/json:
               example:
                 message: "Movie session not found"
+  /sessions/inactive:
+    get:
+      tags:
+        - "Movie sessions"
+      security:
+        - bearerAuth: []
+      summary: "Get inactive movies sessions information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieSessionsOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /movies:
     get:
       tags:
@@ -961,6 +1209,18 @@ paths:
             application/json:
               example:
                 message: "Please, specify name, description, year, month, day, director_id, genres and actors."
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /movies/{id}:
     get:
       tags:
@@ -1013,6 +1273,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong movie's id"
           content:
@@ -1040,6 +1312,18 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong movies id"
           content:
@@ -1070,6 +1354,24 @@ paths:
       responses:
         '200':
           description: "Successful Operation"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
+        '404':
+          description: "Wrong movie's id"
+          content:
+            application/json:
+              example:
+                message: "Movie not found"
   /tickets:
     get:
       tags:
@@ -1110,6 +1412,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TicketsOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
     post:
       security:
         - bearerAuth: []
@@ -1136,6 +1450,24 @@ paths:
             application/json:
               example:
                 message: "Please, specify session_id"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
+        '405':
+          description: "No more seats on chosen session"
+          content:
+            application/json:
+              example:
+                message: "No more seats available"
   /tickets/{id}:
     get:
       security:
@@ -1157,12 +1489,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TicketOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Ticket not found"
           content:
             application/json:
               example:
                 message: "Ticket not found"
+        '405':
+          description: "Admin access required"
+          content:
+            application/json:
+              example:
+                message: "Not allowed"
     patch:
       security:
         - bearerAuth: []
@@ -1190,18 +1540,30 @@ paths:
             application/json:
               example:
                 message: "Updated"
-        '403':
-          description: "No more tickets"
+        '401':
+          description: "Require authorized user"
           content:
             application/json:
               example:
-                message: "No more seats available"
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong ticket's id"
           content:
             application/json:
               example:
                 message: "Ticket not found"
+        '405':
+          description: "No more seats on chosen session"
+          content:
+            application/json:
+              example:
+                message: "No more seats available"
     delete:
       security:
         - bearerAuth: []
@@ -1223,12 +1585,82 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong ticket's id"
           content:
             application/json:
               example:
                 message: "Ticket not found"
+        '405':
+          description: "Admin access required"
+          content:
+            application/json:
+              example:
+                message: "Not allowed"
+  /tickets/inactive:
+    get:
+      tags:
+        - "Tickets"
+      security:
+        - bearerAuth: [ ]
+      summary: "Get current user inactive tickets as user or all inactive tickets as admin"
+      description: "This can only be done by the logged in user"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "Session ID (only as admin)"
+          required: false
+          schema:
+            type: "string"
+        - name: "user_id"
+          in: "query"
+          description: "User ID (only as admin)"
+          required: false
+          schema:
+            type: "string"
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketsOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
   /users:
     get:
       tags:
@@ -1275,6 +1707,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsersOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
     post:
       security:
         - bearerAuth: []
@@ -1302,6 +1746,18 @@ paths:
               example:
                 message: "Please, specify 'firstname', 'lastname', 'email', 'password' and 'is_admin'"
         '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
+        '404':
           description: "Wrong input email"
           content:
             application/json:
@@ -1328,6 +1784,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "User not found"
           content:
@@ -1361,6 +1829,18 @@ paths:
             application/json:
               example:
                 message: "Updated"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong user's id"
           content:
@@ -1388,12 +1868,70 @@ paths:
             application/json:
               example:
                 message: "Deleted"
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
         '404':
           description: "Wrong user's id"
           content:
             application/json:
               example:
                 message: "User not found"
+        '405':
+          description: "Admin access required"
+          content:
+            application/json:
+              example:
+                message: "Not allowed"
+  /users/inactive:
+    get:
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      summary: "Get inactive users information"
+      description: "This can only be done by the logged in admin"
+      parameters:
+        - name: "offset"
+          in: "query"
+          description: "Offset"
+          required: false
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          description: "Limit"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
+        '403':
+          description: "Admin access rights required"
+          content:
+            application/json:
+              example:
+                message: "Forbidden"
 components:
   securitySchemes:
     bearerAuth:
@@ -1415,7 +1953,7 @@ components:
           example: "Stone"
         movies:
           type: "array"
-          example: "[]"
+          example: []
     ActorsOut:
       type: "array"
       items:
@@ -1440,7 +1978,7 @@ components:
           example: 60
         movie_sessions:
           type: "array"
-          example: "[]"
+          example: []
     AuditoriumsOut:
       type: "array"
       items:
@@ -1492,7 +2030,7 @@ components:
           example: "Carpenter"
         movies:
           type: "array"
-          example: "[]"
+          example: []
     DirectorsOut:
       type: "array"
       items:
@@ -1517,7 +2055,7 @@ components:
           example: "comedy"
         movies:
           type: "array"
-          example: "[]"
+          example: []
     GenresOut:
       type: "array"
       items:
@@ -1548,16 +2086,16 @@ components:
           example: "Sun, 15 May 2022 14:30:00 GMT"
         auditorium:
           type: "array"
-          example: "[]"
+          example: []
         movie_id:
           type: "integer"
           example: 2
         movies:
           type: "array"
-          example: "[]"
+          example: []
         tickets:
           type: "array"
-          example: "[]"
+          example: []
         remain_seats:
           type: "integer"
           example: 22
@@ -1609,13 +2147,13 @@ components:
           example: "Cool movie"
         sessions:
           type: "array"
-          example: "[]"
+          example: []
         genres:
           type: "array"
-          example: "[]"
+          example: []
         actors:
           type: "array"
-          example: "[]"
+          example: []
     MoviesOut:
       type: "array"
       items:
@@ -1643,19 +2181,19 @@ components:
           example: 15
         genres:
           type: "array"
-          example: "['horror', 'slasher']"
+          example: ["horror", "slasher"]
         actors:
           type: "array"
-          example: "['Bruce Campbell', 'Someone Else']"
+          example: ["Bruce Campbell", "Someone Else"]
     MovieSpecialPatchIn:
       type: "object"
       properties:
         genres:
           type: "array"
-          example: "['horror', 'slasher']"
+          example: ["horror", "slasher"]
         actors:
           type: "array"
-          example: "['Bruce Campbell', 'Someone Else']"
+          example: ["Bruce Campbell", "Someone Else"]
     TicketOut:
       type: "object"
       properties:

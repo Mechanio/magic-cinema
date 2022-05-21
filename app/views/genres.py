@@ -10,6 +10,11 @@ genres_bp = Blueprint('genres', __name__)
 
 @genres_bp.route("/genres/", methods=["GET"])
 def get_genres():
+    """
+    Get all genres or specific genre by name
+
+    :return: json with genres info
+    """
     genre = request.args.get("genre")
     offset = request.args.get("offset", OFFSET_DEFAULT)
     limit = request.args.get("limit", LIMIT_DEFAULT)
@@ -23,6 +28,12 @@ def get_genres():
 
 @genres_bp.route("/genres/<int:id>", methods=["GET"])
 def get_genre(id):
+    """
+    Get genre info by id
+
+    :param id: id of genre
+    :return: json with genre info
+    """
     genre = GenresModel.find_by_id(id, without_sessions=True)
     if not genre:
         return jsonify({"message": "Genre not found."}), 404
@@ -34,8 +45,13 @@ def get_genre(id):
 @jwt_required()
 @admin_group_required
 def create_genre():
+    """
+    Create genre as admin
+
+    :return: json with new genre id
+    """
     if not request.json:
-        return jsonify({"message": 'Please, specify "genre".'}), 400
+        return jsonify({"message": 'Please, specify "genre".'}), 404
     genre = request.json.get("genre")
     genre = GenresModel(genre=genre)
     genre.save_to_db()
@@ -46,6 +62,12 @@ def create_genre():
 @jwt_required()
 @admin_group_required
 def update_genre(id):
+    """
+    Update genre info by id as admin
+
+    :param id: id of genre
+    :return: json with message "Updated"
+    """
     new_genre = request.json.get("genre")
 
     genre = GenresModel.find_by_id(id, to_dict=False)
@@ -63,6 +85,12 @@ def update_genre(id):
 @jwt_required()
 @admin_group_required
 def delete_genre(id):
+    """
+    Delete genre by id as admin
+
+    :param id: id of genre
+    :return: json with message "Deleted"
+    """
     genre = GenresModel.delete_by_id(id)
     if genre == 404:
         return jsonify({"message": "Genre not found."}), 404

@@ -10,6 +10,11 @@ auditoriums_bp = Blueprint('auditorium', __name__)
 
 @auditoriums_bp.route("/auditorium/", methods=["GET"])
 def get_auditoriums():
+    """
+    Get all auditoriums
+
+    :return: json with auditoriums info
+    """
     offset = request.args.get("offset", OFFSET_DEFAULT)
     limit = request.args.get("limit", LIMIT_DEFAULT)
     auditoriums = AuditoriumModel.return_all(offset, limit)
@@ -19,6 +24,12 @@ def get_auditoriums():
 
 @auditoriums_bp.route("/auditorium/<int:id>", methods=["GET"])
 def get_auditorium(id):
+    """
+    Get auditorium info by id
+
+    :param id: id of auditorium
+    :return: json with auditorium info
+    """
     auditorium = AuditoriumModel.find_by_id(id)
     if not auditorium:
         return jsonify({"message": "Auditorium not found."}), 404
@@ -30,6 +41,11 @@ def get_auditorium(id):
 @jwt_required()
 @admin_group_required
 def create_auditorium():
+    """
+    Create auditorium as admin
+
+    :return: json with new auditorium id
+    """
     if not request.json:
         return jsonify({"message": 'Please, specify "seats".'}), 400
 
@@ -44,6 +60,12 @@ def create_auditorium():
 @jwt_required()
 @admin_group_required
 def update_auditorium(id):
+    """
+    Update auditorium info by id as admin
+
+    :param id: id of auditorium
+    :return: json with message "Updated"
+    """
     seats = request.json.get("seats")
 
     auditorium = AuditoriumModel.find_by_id(id, to_dict=False)
@@ -61,6 +83,12 @@ def update_auditorium(id):
 @jwt_required()
 @admin_group_required
 def delete_auditorium(id):
+    """
+    Delete auditorium by id as admin
+
+    :param id: id of auditorium
+    :return: json with message "Deleted"
+    """
     auditorium = AuditoriumModel.delete_by_id(id)
     if auditorium == 404:
         return jsonify({"message": "Auditorium not found."}), 404
