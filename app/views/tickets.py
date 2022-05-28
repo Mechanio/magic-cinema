@@ -9,7 +9,7 @@ from app.decorators import admin_group_required
 tickets_bp = Blueprint('tickets', __name__)
 
 
-@tickets_bp.route("/tickets/", methods=["GET"])
+@tickets_bp.route("/api/tickets/", methods=["GET"])
 @jwt_required()
 def get_tickets():
     """
@@ -38,7 +38,7 @@ def get_tickets():
     return jsonify(tickets)
 
 
-@tickets_bp.route("/tickets/inactive", methods=["GET"])
+@tickets_bp.route("/api/tickets/inactive", methods=["GET"])
 @jwt_required()
 def get_inactive_tickets():
     """
@@ -67,7 +67,7 @@ def get_inactive_tickets():
     return jsonify(tickets)
 
 
-@tickets_bp.route("/tickets/<int:id_>", methods=["GET"])
+@tickets_bp.route("/api/tickets/<int:id_>", methods=["GET"])
 @jwt_required()
 def get_ticket(id_):
     """
@@ -90,7 +90,7 @@ def get_ticket(id_):
     return jsonify(ticket)
 
 
-@tickets_bp.route("/tickets", methods=["POST"])
+@tickets_bp.route("/api/tickets/", methods=["POST"])
 @jwt_required()
 def create_ticket():
     """
@@ -108,6 +108,8 @@ def create_ticket():
         session_id = request.json.get("session_id")
         user_id = request.json.get("user_id")
 
+        if not user_id:
+            user_id = current_user.id
         if not session_id or not user_id:
             return jsonify({"message": 'Please, specify session_id, user_id.'}), 400
 
@@ -136,7 +138,7 @@ def create_ticket():
     return jsonify({"id": ticket.id}), 201
 
 
-@tickets_bp.route("/tickets/<int:id_>", methods=["PATCH"])
+@tickets_bp.route("/api/tickets/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_ticket(id_):
@@ -174,7 +176,7 @@ def update_ticket(id_):
     return jsonify({"message": "Updated"})
 
 
-@tickets_bp.route("/tickets/<int:id_>", methods=["DELETE"])
+@tickets_bp.route("/api/tickets/<int:id_>", methods=["DELETE"])
 @jwt_required()
 def delete_ticket(id_):
     """

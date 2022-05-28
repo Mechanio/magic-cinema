@@ -8,7 +8,7 @@ from app.decorators import admin_group_required
 auditoriums_bp = Blueprint('auditorium', __name__)
 
 
-@auditoriums_bp.route("/auditorium/", methods=["GET"])
+@auditoriums_bp.route("/api/auditorium/", methods=["GET"])
 def get_auditoriums():
     """
     Get all auditoriums
@@ -22,7 +22,7 @@ def get_auditoriums():
     return jsonify(auditoriums)
 
 
-@auditoriums_bp.route("/auditorium/<int:id_>", methods=["GET"])
+@auditoriums_bp.route("/api/auditorium/<int:id_>", methods=["GET"])
 def get_auditorium(id_):
     """
     Get auditorium info by id
@@ -37,7 +37,7 @@ def get_auditorium(id_):
     return jsonify(auditorium)
 
 
-@auditoriums_bp.route("/auditorium", methods=["POST"])
+@auditoriums_bp.route("/api/auditorium/", methods=["POST"])
 @jwt_required()
 @admin_group_required
 def create_auditorium():
@@ -56,7 +56,7 @@ def create_auditorium():
     return jsonify({"id": auditorium.id}), 201
 
 
-@auditoriums_bp.route("/auditorium/<int:id_>", methods=["PATCH"])
+@auditoriums_bp.route("/api/auditorium/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_auditorium(id_):
@@ -79,7 +79,7 @@ def update_auditorium(id_):
     return jsonify({"message": "Updated"})
 
 
-@auditoriums_bp.route("/auditorium/<int:id_>", methods=["DELETE"])
+@auditoriums_bp.route("/api/auditorium/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_auditorium(id_):

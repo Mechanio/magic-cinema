@@ -1,5 +1,5 @@
 def test_create_user(client, app, authentication_headers):
-    response = client.post('/users', json={
+    response = client.post('/api/users/', json={
         "firstname": "John",
         "lastname": "Doe",
         "email": "test@test.com",
@@ -10,17 +10,17 @@ def test_create_user(client, app, authentication_headers):
 
 
 def test_update_user(client, app, authentication_headers):
-    response = client.patch('/users/2', json={
+    response = client.patch('/api/users/2', json={
         "email": "test@test.test",
     }, headers=authentication_headers(is_admin=True))
     assert response.json["message"] == "Updated"
 
 
 def test_get_user(client, app, authentication_headers):
-    response = client.get('/users/2', headers=authentication_headers(is_admin=True))
+    response = client.get('/api/users/2', headers=authentication_headers(is_admin=True))
     assert response.json['firstname'] == "John" and response.json['email'] == "test@test.test"
 
 
 def test_get_users(client, app, authentication_headers):
-    response = client.get('/users/', headers=authentication_headers(is_admin=True))
+    response = client.get('/api/users/', headers=authentication_headers(is_admin=True))
     assert response.json[1]['firstname'] == "John" and response.json[1]['email'] == "test@test.test"

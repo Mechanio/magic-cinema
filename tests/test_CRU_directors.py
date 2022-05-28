@@ -1,5 +1,5 @@
 def test_create_director(client, app, authentication_headers):
-    response = client.post('/director', json={
+    response = client.post('/api/director/', json={
         "firstname": "Leos",
         "lastname": "Corox",
     }, headers=authentication_headers(is_admin=True))
@@ -7,7 +7,7 @@ def test_create_director(client, app, authentication_headers):
 
 
 def test_update_director(client, app, authentication_headers):
-    response = client.patch('/director/1', json={
+    response = client.patch('/api/director/1', json={
         "firstname": "Leos",
         "lastname": "Carax",
     }, headers=authentication_headers(is_admin=True))
@@ -15,10 +15,10 @@ def test_update_director(client, app, authentication_headers):
 
 
 def test_get_director(client, app):
-    response = client.get('/director/1')
+    response = client.get('/api/director/1')
     assert response.json['firstname'] == "Leos" and response.json['lastname'] == "Carax"
 
 
 def test_get_directors(client, app):
-    response = client.get('/director/')
+    response = client.get('/api/director/')
     assert response.json[0]['firstname'] == "Leos" and response.json[0]['lastname'] == "Carax"
