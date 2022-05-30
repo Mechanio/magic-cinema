@@ -1,4 +1,4 @@
-from flask import jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint, make_response, redirect, flash, render_template
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, get_jwt,
     jwt_required, get_jwt_identity)
@@ -16,7 +16,7 @@ def get_groups(user):
     return {"groups": group_list}
 
 
-@auth_bp.route("/auth/registration", methods=["POST"])
+@auth_bp.route("/api/auth/registration", methods=["POST"])
 def register():
     """
     Method for adding a new user (registration)
@@ -57,7 +57,7 @@ def register():
         }, 500
 
 
-@auth_bp.route("/auth/login", methods=["POST"])
+@auth_bp.route("/api/auth/login", methods=["POST"])
 def login():
     """
     Method for logination
@@ -86,7 +86,7 @@ def login():
         return {"message": "Wrong password"}, 404
 
 
-@auth_bp.route("/auth/refresh", methods=["POST"])
+@auth_bp.route("/api/auth/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def post():
     """
@@ -104,7 +104,7 @@ def post():
     return {'access_token': access_token}, 201
 
 
-@auth_bp.route("/auth/logout-access", methods=["POST"])
+@auth_bp.route("/api/auth/logout-access", methods=["POST"])
 @jwt_required()
 def logout_access():
     """
@@ -124,7 +124,7 @@ def logout_access():
         }, 500
 
 
-@auth_bp.route("/auth/logout-refresh", methods=["POST"])
+@auth_bp.route("/api/auth/logout-refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def logout_refresh():
     """

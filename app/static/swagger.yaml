@@ -5,7 +5,7 @@ info:
   description: "This is a Cinema API where you can execute CRUD operations on 
   movies, actors, genres, sessions, customers and auditoriums"
 servers:
-  - url: http://127.0.0.1:5000
+  - url: http://0.0.0.0:5000
 tags:
   - name: "Actors"
     description: "About the actors and the movies in which they are staring"
@@ -25,7 +25,7 @@ tags:
   - name: "Users"
     description: "Customer or administrator information"
 paths:
-  /actors:
+  /api/actors/:
     get:
       tags:
         - "Actors"
@@ -100,7 +100,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /actors/{id}:
+  /api/actors/{id}:
     get:
       tags:
         - "Actors"
@@ -209,7 +209,7 @@ paths:
             application/json:
               example:
                 message: "Actor not found"
-  /auditorium:
+  /api/auditorium/:
     get:
       tags:
         - "Auditoriums"
@@ -272,7 +272,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /auditorium/{id}:
+  /api/auditorium/{id}:
     get:
       tags:
         - "Auditoriums"
@@ -381,7 +381,7 @@ paths:
             application/json:
               example:
                 message: "Auditorium not found"
-  /auth/registration:
+  /api/auth/registration:
     post:
       tags:
         - "Authentication"
@@ -420,7 +420,7 @@ paths:
               example:
                 message: "Something went wrong while creating"
                 error: "{error}"
-  /auth/login:
+  /api/auth/login:
     post:
       tags:
         - "Authentication"
@@ -452,7 +452,7 @@ paths:
             application/json:
               example:
                 message: "User with email {email} doesn't exist"
-  /auth/refresh:
+  /api/auth/refresh:
     post:
       security:
         - bearerAuth: []
@@ -485,7 +485,7 @@ paths:
             application/json:
               example:
                 msg: "Only refresh tokens are allowed"
-  /auth/logout-access:
+  /api/auth/logout-access:
     post:
       security:
         - bearerAuth: []
@@ -513,7 +513,7 @@ paths:
               example:
                 message: "Something went wrong while creating"
                 error: "{error}"
-  /auth/logout-refresh:
+  /api/auth/logout-refresh:
     post:
       security:
         - bearerAuth: []
@@ -541,7 +541,7 @@ paths:
               example:
                 message: "Something went wrong while creating"
                 error: "{error}"
-  /director:
+  /api/director/:
     get:
       tags:
         - "Directors"
@@ -616,7 +616,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /director/{id}:
+  /api/director/{id}:
     get:
       tags:
         - "Directors"
@@ -726,7 +726,7 @@ paths:
             application/json:
               example:
                 message: "Director not found"
-  /genres:
+  /api/genres/:
     get:
       tags:
         - "Genres"
@@ -795,7 +795,7 @@ paths:
             application/json:
               example:
                 message: "Please, specify 'genre'"
-  /genres/{id}:
+  /api/genres/{id}:
     get:
       tags:
         - "Genres"
@@ -916,7 +916,7 @@ paths:
             application/json:
               example:
                 message: "Genre not found"
-  /sessions:
+  /api/sessions/:
     get:
       tags:
         - "Movie sessions"
@@ -997,7 +997,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /sessions/{id}:
+  /api/sessions/{id}:
     get:
       tags:
         - "Movie sessions"
@@ -1106,7 +1106,7 @@ paths:
             application/json:
               example:
                 message: "Movie session not found"
-  /sessions/inactive:
+  /api/sessions/inactive:
     get:
       tags:
         - "Movie sessions"
@@ -1146,7 +1146,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /movies:
+  /api/movies/:
     get:
       tags:
         - "Movies"
@@ -1221,7 +1221,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /movies/{id}:
+  /api/movies/{id}:
     get:
       tags:
         - "Movies"
@@ -1330,7 +1330,7 @@ paths:
             application/json:
               example:
                 message: "Movie not found"
-  /movies/changes/{id}:
+  /api/movies/changes/{id}:
     patch:
       security:
         - bearerAuth: []
@@ -1372,7 +1372,7 @@ paths:
             application/json:
               example:
                 message: "Movie not found"
-  /tickets:
+  /api/tickets/:
     get:
       tags:
         - "Tickets"
@@ -1468,7 +1468,7 @@ paths:
             application/json:
               example:
                 message: "No more seats available"
-  /tickets/{id}:
+  /api/tickets/{id}:
     get:
       security:
         - bearerAuth: []
@@ -1609,7 +1609,7 @@ paths:
             application/json:
               example:
                 message: "Not allowed"
-  /tickets/inactive:
+  /api/tickets/inactive:
     get:
       tags:
         - "Tickets"
@@ -1661,7 +1661,7 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
-  /users:
+  /api/users/:
     get:
       tags:
         - "Users"
@@ -1763,7 +1763,7 @@ paths:
             application/json:
               example:
                 message: "Email {email} already used"
-  /users/{id}:
+  /api/users/{id}:
     get:
       tags:
         - "Users"
@@ -1790,12 +1790,6 @@ paths:
             application/json:
               example:
                 msg: "Missing Authorization Header"
-        '403':
-          description: "Admin access rights required"
-          content:
-            application/json:
-              example:
-                message: "Forbidden"
         '404':
           description: "User not found"
           content:
@@ -1892,7 +1886,7 @@ paths:
             application/json:
               example:
                 message: "Not allowed"
-  /users/inactive:
+  /api/users/inactive:
     get:
       tags:
         - "Users"
@@ -1932,6 +1926,27 @@ paths:
             application/json:
               example:
                 message: "Forbidden"
+  /api/users/current:
+    get:
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      summary: "Get current user information by email"
+      description: "This can only be done by the logged in user"
+      responses:
+        '200':
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '401':
+          description: "Require authorized user"
+          content:
+            application/json:
+              example:
+                msg: "Missing Authorization Header"
 components:
   securitySchemes:
     bearerAuth:

@@ -10,7 +10,7 @@ from app.decorators import admin_group_required
 movies_bp = Blueprint('movies', __name__)
 
 
-@movies_bp.route("/movies/", methods=["GET"])
+@movies_bp.route("/api/movies/", methods=["GET"])
 def get_movies():
     """
     Get all movies or by name or director id
@@ -32,7 +32,7 @@ def get_movies():
     return jsonify(movies)
 
 
-@movies_bp.route("/movies/<int:id_>", methods=["GET"])
+@movies_bp.route("/api/movies/<int:id_>", methods=["GET"])
 def get_movie(id_):
     """
     Get movie info by id
@@ -47,7 +47,7 @@ def get_movie(id_):
     return jsonify(movie)
 
 
-@movies_bp.route("/movies", methods=["POST"])
+@movies_bp.route("/api/movies/", methods=["POST"])
 @jwt_required()
 @admin_group_required
 def create_movie():
@@ -91,7 +91,7 @@ def create_movie():
     return jsonify({"id": movie.id}), 201
 
 
-@movies_bp.route("/movies/<int:id_>", methods=["PATCH"])
+@movies_bp.route("/api/movies/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_movie(id_):
@@ -150,7 +150,7 @@ def update_movie(id_):
     return jsonify({"message": "Updated"})
 
 
-@movies_bp.route("/movies/changes/<int:id_>", methods=["PATCH"])
+@movies_bp.route("/api/movies/changes/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def delete_genre_or_cast(id_):
@@ -189,7 +189,7 @@ def delete_genre_or_cast(id_):
     return jsonify(result)
 
 
-@movies_bp.route("/movies/<int:id_>", methods=["DELETE"])
+@movies_bp.route("/api/movies/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_movie(id_):

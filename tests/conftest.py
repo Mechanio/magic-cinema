@@ -27,14 +27,14 @@ def authentication_headers(client):
         else:
             email = "usertest"
             password = "usertest"
-        response = client.post('/auth/login',
+        response = client.post('/api/auth/login',
                                json={
                                    "email": email,
                                    "password": password,
                                })
 
         if response.json['message'] == f"User with email {email} doesn't exist":
-            response = client.post('/auth/registration',
+            response = client.post('/api/auth/registration',
                                    json={
                                        "firstname": email,
                                        "lastname": email,

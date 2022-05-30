@@ -8,7 +8,7 @@ from app.decorators import admin_group_required
 users_bp = Blueprint('users', __name__)
 
 
-@users_bp.route("/users/", methods=["GET"])
+@users_bp.route("/api/users/", methods=["GET"])
 @jwt_required()
 @admin_group_required
 def get_users():
@@ -31,7 +31,7 @@ def get_users():
     return jsonify(user)
 
 
-@users_bp.route("/users/inactive", methods=["GET"])
+@users_bp.route("/api/users/inactive", methods=["GET"])
 @jwt_required()
 @admin_group_required
 def get_inactive_users():
@@ -46,7 +46,20 @@ def get_inactive_users():
     return jsonify(user)
 
 
-@users_bp.route("/users/<int:id_>", methods=["GET"])
+@users_bp.route("/api/users/current", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    """
+    Get current user info by jwt email
+
+    :return: json with user info
+    """
+    email = get_jwt().get("sub")
+    current_user = UserModel.find_by_email(email)
+    return jsonify(current_user)
+
+
+@users_bp.route("/api/users/<int:id_>", methods=["GET"])
 @jwt_required()
 @admin_group_required
 def get_user(id_):
@@ -63,7 +76,7 @@ def get_user(id_):
     return jsonify(user)
 
 
-@users_bp.route("/users", methods=["POST"])
+@users_bp.route("/api/users/", methods=["POST"])
 @jwt_required()
 @admin_group_required
 def create_user():
@@ -93,7 +106,7 @@ def create_user():
     return jsonify({"id": user.id}), 201
 
 
-@users_bp.route("/users/<int:id_>", methods=["PATCH"])
+@users_bp.route("/api/users/<int:id_>", methods=["PATCH"])
 @jwt_required()
 def update_user(id_):
     """
@@ -143,12 +156,12 @@ def update_user(id_):
         else:
             return jsonify({"message": "Not allowed"}), 404
     if errors:
-        assert jsonify(errors)
+        return jsonify(errors)
     else:
         return jsonify({"message": "Updated"})
 
 
-@users_bp.route("/users/<int:id_>", methods=["DELETE"])
+@users_bp.route("/api/users/<int:id_>", methods=["DELETE"])
 @jwt_required()
 def delete_user(id_):
     """

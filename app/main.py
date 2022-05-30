@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 
 from config import Config
 from .database.database import db, base
@@ -33,7 +34,9 @@ def setup_swagger(app):
 
 def create_app():
     app = Flask(__name__)
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     app.config.from_object(Config)
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     setup_database(app)
     setup_jwt(app)
     setup_swagger(app)

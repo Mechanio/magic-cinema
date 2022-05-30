@@ -10,7 +10,7 @@ from app.decorators import admin_group_required
 movie_sessions_bp = Blueprint('sessions', __name__)
 
 
-@movie_sessions_bp.route("/sessions/", methods=["GET"])
+@movie_sessions_bp.route("/api/sessions/", methods=["GET"])
 def get_movie_sessions():
     """
     Get all movies sessions or by movie or auditorium ids
@@ -39,7 +39,7 @@ def get_movie_sessions():
     return jsonify(movie_sessions)
 
 
-@movie_sessions_bp.route("/sessions/inactive", methods=["GET"])
+@movie_sessions_bp.route("/api/sessions/inactive", methods=["GET"])
 @jwt_required()
 @admin_group_required
 def get_inactive_movies_sessions():
@@ -54,7 +54,7 @@ def get_inactive_movies_sessions():
     return jsonify(user)
 
 
-@movie_sessions_bp.route("/sessions/<int:id_>", methods=["GET"])
+@movie_sessions_bp.route("/api/sessions/<int:id_>", methods=["GET"])
 def get_movie_session(id_):
     """
     Get movie session info by id
@@ -69,7 +69,7 @@ def get_movie_session(id_):
     return jsonify(movie_session)
 
 
-@movie_sessions_bp.route("/sessions", methods=["POST"])
+@movie_sessions_bp.route("/api/sessions/", methods=["POST"])
 @jwt_required()
 @admin_group_required
 def create_movie_session():
@@ -104,7 +104,7 @@ def create_movie_session():
     return jsonify({"id": movie_session.id}), 201
 
 
-@movie_sessions_bp.route("/sessions/<int:id_>", methods=["PATCH"])
+@movie_sessions_bp.route("/api/sessions/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_movie_session(id_):
@@ -148,7 +148,7 @@ def update_movie_session(id_):
     return jsonify({"message": "Updated"})
 
 
-@movie_sessions_bp.route("/sessions/<int:id_>", methods=["DELETE"])
+@movie_sessions_bp.route("/api/sessions/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_movie_session(id_):

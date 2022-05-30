@@ -5,11 +5,10 @@ from app.models import ActorsModel
 from constants import OFFSET_DEFAULT, LIMIT_DEFAULT
 from app.decorators import admin_group_required
 
-
 actors_bp = Blueprint('actors', __name__)
 
 
-@actors_bp.route("/actors/", methods=["GET"])
+@actors_bp.route("/api/actors/", methods=["GET"])
 def get_actors():
     """
     Get all actors or by name
@@ -27,7 +26,7 @@ def get_actors():
     return jsonify(actor)
 
 
-@actors_bp.route("/actors/<int:id_>", methods=["GET"])
+@actors_bp.route("/api/actors/<int:id_>", methods=["GET"])
 def get_actor(id_):
     """
     Get actor info by id
@@ -42,7 +41,7 @@ def get_actor(id_):
     return jsonify(actor)
 
 
-@actors_bp.route("/actors", methods=["POST"])
+@actors_bp.route("/api/actors/", methods=["POST"])
 @jwt_required()
 @admin_group_required
 def create_actor():
@@ -64,7 +63,7 @@ def create_actor():
     return jsonify({"id": actor.id}), 201
 
 
-@actors_bp.route("/actors/<int:id_>", methods=["PATCH"])
+@actors_bp.route("/api/actors/<int:id_>", methods=["PATCH"])
 @jwt_required()
 @admin_group_required
 def update_actor(id_):
@@ -89,7 +88,7 @@ def update_actor(id_):
     return jsonify({"message": "Updated"}), 200
 
 
-@actors_bp.route("/actors/<int:id_>", methods=["DELETE"])
+@actors_bp.route("/api/actors/<int:id_>", methods=["DELETE"])
 @jwt_required()
 @admin_group_required
 def delete_actor(id_):
