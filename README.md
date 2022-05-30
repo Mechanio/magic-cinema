@@ -51,6 +51,10 @@ sudo docker-compose up
 To stop containers
 - Ctrl-C
 - ```sudo docker-compose down```
+
+To connect:
+- API with Swagger: 0.0.0.0:5000
+- React front-end: localhost:3000
 ---
 #### Additional links for front-end (as admin)
 
