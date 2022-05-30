@@ -36,6 +36,7 @@ def create_app():
     app = Flask(__name__)
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     app.config.from_object(Config)
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     setup_database(app)
     setup_jwt(app)
     setup_swagger(app)

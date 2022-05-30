@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  postgresdb:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cinema
+      POSTGRES_PASSWORD: 1111
+#    ports:
+#      - "5432:5432"
+    volumes:
+      - .postgres-data:/var/lib/postgresql/data
+  flask_app:
+    build: .
+    container_name: flask_app
+    restart: always
+    command: gunicorn --bind 0.0.0.0:5000 run:app
+    ports:
+      - "5000:5000"
+    environment:
+      DB_STRING: postgresql://postgres:1111@postgresdb:5432/cinema
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      KEY: ${KEY}
+    depends_on:
+      - postgresdb
+  web:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/user/src/app
+    depends_on:
+      - flask_app

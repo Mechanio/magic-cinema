@@ -1,5 +1,6 @@
 ec2_for_JSP_course_key_pair.pem
 /010_10.02/flask_frontend/app/secret_key.py
+.postgres-data
 
 
 

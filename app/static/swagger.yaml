@@ -5,7 +5,7 @@ info:
   description: "This is a Cinema API where you can execute CRUD operations on 
   movies, actors, genres, sessions, customers and auditoriums"
 servers:
-  - url: http://127.0.0.1:5000
+  - url: http://0.0.0.0:5000
 tags:
   - name: "Actors"
     description: "About the actors and the movies in which they are staring"

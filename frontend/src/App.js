@@ -26,6 +26,8 @@ import Sessions from "./components/Sessions"
 import Session from "./components/Session"
 import CreateSession from "./components/createSession"
 import NotFound from "./components/NotFound";
+import Auditoriums from "./components/Auditoriums"
+import CreateAuditorium from "./components/createAuditorium"
 
 
 function App() {
@@ -64,6 +66,8 @@ function App() {
                     <Route exact path="/sessions" element={<Sessions/>}/>
                     <Route exact path="/sessions/:id" element={<Session/>}/>
                     <Route exact path="/sessions/create" element={<CreateSession/>}/>
+                    <Route exact path="/auditoriums" element={<Auditoriums/>}/>
+                    <Route exact path="/auditoriums/create" element={<CreateAuditorium/>}/>
                     <Route exact path="*" element={<NotFound/>}/>
                 </Routes>
             </div>

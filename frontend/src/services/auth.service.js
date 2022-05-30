@@ -45,7 +45,7 @@ const getAccessToken = () => {
 const authGuard = (pathname, navigate) => {
     const accessToken = getAccessToken()
 
-    if (!accessToken && !['/auth/login', '/actors', '/actors/:id', '/', '/movies', '/genres', '/directors'].includes(pathname)) {
+    if (!accessToken && !['/auth/login', '/actors', '/sessions', '/actors/:id', '/', '/movies', '/genres', '/directors'].includes(pathname)) {
         navigate('/auth/login')
     }
 }

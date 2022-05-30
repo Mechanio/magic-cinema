@@ -144,6 +144,18 @@ const buyTicket = (session_id) => {
 }
 
 
+const getAuditoriumsInfo = () => {
+    return axios.get("http://localhost:5000/api/auditorium/")
+}
+
+const deleteAuditorium = (id_) => {
+    return axios.delete("http://localhost:5000/api/auditorium/" + id_)
+}
+
+const createAuditorium = (seats) => {
+    return axios.post("http://localhost:5000/api/auditorium/", {seats})
+}
+
 const fetchservice = {
     getProfileInfo,
     getActorsInfo,
@@ -178,7 +190,10 @@ const fetchservice = {
     deleteSession,
     createSession,
     getSessionInfo,
-    buyTicket
+    buyTicket,
+    getAuditoriumsInfo,
+    deleteAuditorium,
+    createAuditorium
 }
 
 export default fetchservice
